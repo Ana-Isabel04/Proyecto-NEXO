@@ -295,6 +295,185 @@ Los siguientes requerimientos establecen condiciones de calidad y comportamiento
 
 Las siguientes reglas representan las condiciones que NEXO debe respetar independientemente de la tecnología utilizada para implementar la plataforma.
 
+### Usuarios y roles
+
+- **RN-01.** La consulta y búsqueda de eventos publicados puede realizarse sin iniciar sesión.
+- **RN-02.** Un usuario debe iniciar sesión antes de confirmar una reserva.
+- **RN-03.** Cada cuenta debe tener un rol que determine las funcionalidades disponibles.
+- **RN-04.** Las funcionalidades exclusivas del administrador no deben estar disponibles para usuarios ni organizadores.
+- **RN-05.** Un usuario solo puede consultar y administrar la información privada correspondiente a su propia cuenta.
+
+### Eventos
+
+- **RN-06.** Cada evento debe estar asociado a un organizador.
+- **RN-07.** Un organizador solo puede gestionar los eventos asociados a su propia cuenta.
+- **RN-08.** Un evento debe contar con la información obligatoria definida por NEXO antes de ser publicado.
+- **RN-09.** Un organizador puede modificar la información de sus propios eventos de acuerdo con el estado del evento.
+- **RN-10.** Un organizador puede cancelar sus propios eventos.
+- **RN-11.** Un evento cancelado no debe permitir nuevas reservas.
+- **RN-12.** Un evento finalizado no debe permitir nuevas reservas.
+- **RN-13.** La capacidad de un evento no puede ser inferior a la cantidad de cupos que ya hayan sido comprometidos mediante reservas confirmadas.
+
+### Reservas
+
+- **RN-14.** Solo los usuarios autenticados pueden confirmar reservas.
+- **RN-15.** Toda reserva debe estar asociada a un usuario y a un evento.
+- **RN-16.** La cantidad solicitada en una reserva no puede superar la disponibilidad del evento.
+- **RN-17.** El sistema debe comprobar la disponibilidad antes de confirmar una reserva.
+- **RN-18.** La disponibilidad debe disminuir de acuerdo con la cantidad de cupos reservados cuando una reserva sea confirmada.
+- **RN-19.** Cada reserva confirmada debe tener un identificador único.
+- **RN-20.** Si no existe disponibilidad suficiente, la reserva debe ser rechazada y el sistema debe informar la causa.
+- **RN-21.** Un usuario solo puede consultar sus propias reservas.
+
+### Valoraciones y comentarios
+
+- **RN-22.** Las valoraciones o comentarios deben estar asociados al usuario y al evento correspondiente.
+- **RN-23.** Un usuario solo podrá registrar una valoración cuando cumpla las condiciones establecidas por NEXO para demostrar que corresponde a una experiencia válida con el evento.
+- **RN-24.** El sistema debe conservar la relación entre una valoración, el usuario que la realizó y el evento valorado.
+
+### Pagos y reservas externas
+
+- **RN-25.** NEXO no procesará directamente pagos mediante una pasarela propia en la primera versión.
+- **RN-26.** Cuando un organizador utilice un servicio externo de pago o reserva, NEXO mostrará o proporcionará el enlace o medio de contacto registrado.
+- **RN-27.** El proceso que ocurra después de acceder al servicio externo será responsabilidad del proveedor externo y del organizador correspondiente.
+
+### Búsqueda
+
+- **RN-28.** Los filtros seleccionados por el usuario pueden combinarse en una misma búsqueda.
+- **RN-29.** Los resultados de búsqueda deben cumplir los criterios seleccionados.
+- **RN-30.** Cuando no existan resultados para los criterios seleccionados, el sistema debe informar la situación y permitir realizar una nueva búsqueda.
+
+---
+
+## 10. Modelo de datos
+
+El modelo de datos de NEXO debe almacenar la información necesaria para gestionar cuentas, roles, eventos, reservas, valoraciones y reportes.
+
+### Entidades principales
+
+| Entidad | Atributos principales |
+|---|---|
+| **Usuario** | `id_usuario`, `nombre`, `correo`, `contrasena_hash`, `rol`, `estado`, `fecha_registro` |
+| **Evento** | `id_evento`, `organizador_id`, `nombre`, `descripcion`, `categoria`, `fecha`, `hora`, `ubicacion`, `latitud`, `longitud`, `precio`, `capacidad`, `disponibilidad`, `imagen`, `enlace_externo`, `contacto`, `estado` |
+| **Reserva** | `id_reserva`, `usuario_id`, `evento_id`, `cantidad`, `fecha_reserva`, `estado` |
+| **Valoracion** | `id_valoracion`, `usuario_id`, `evento_id`, `calificacion`, `comentario`, `fecha` |
+| **Reporte** | `id_reporte`, `usuario_id`, `evento_id`, `motivo`, `descripcion`, `fecha`, `estado` |
+
+### Relaciones
+
+**Usuario — Evento**
+
+Un organizador puede crear y administrar múltiples eventos. Cada evento pertenece a un único organizador.
+
+```text
+Usuario (Organizador) 1 ───────── N Evento
+```
+
+**Usuario — Reserva**
+
+Un usuario puede realizar múltiples reservas y cada reserva pertenece a un único usuario.
+
+```text
+Usuario 1 ───────── N Reserva
+```
+
+**Evento — Reserva**
+
+Un evento puede tener múltiples reservas mientras exista disponibilidad.
+
+```text
+Evento 1 ───────── N Reserva
+```
+
+**Usuario — Valoración**
+
+Un usuario puede registrar valoraciones de diferentes eventos cuando cumpla las condiciones definidas.
+
+```text
+Usuario 1 ───────── N Valoración
+```
+
+**Evento — Valoración**
+
+Un evento puede recibir múltiples valoraciones.
+
+```text
+Evento 1 ───────── N Valoración
+```
+
+**Usuario — Reporte**
+
+Un usuario puede generar múltiples reportes.
+
+```text
+Usuario 1 ───────── N Reporte
+```
+
+**Evento — Reporte**
+
+Un evento puede estar asociado a múltiples reportes realizados por usuarios.
+
+```text
+Evento 1 ───────── N Reporte
+```
+
+### Modelo relacional simplificado
+
+```text
+USUARIO
+────────────────────────────────
+PK  id_usuario
+    nombre
+    correo
+    contrasena_hash
+    rol
+    estado
+    fecha_registro
+          │
+          │ 1:N
+          ▼
+EVENTO
+────────────────────────────────
+PK  id_evento
+FK  organizador_id → Usuario
+    nombre
+    descripcion
+    categoria
+    fecha
+    hora
+    ubicacion
+    latitud
+    longitud
+    precio
+    capacidad
+    disponibilidad
+    imagen
+    enlace_externo
+    contacto
+    estado
+     │
+     ├─────────────── 1:N ───────────────► RESERVA
+     │                                      │
+     │                                      └── FK usuario_id
+     │
+     ├─────────────── 1:N ───────────────► VALORACION
+     │                                      │
+     │                                      └── FK usuario_id
+     │
+     └─────────────── 1:N ───────────────► REPORTE
+                                            │
+                                            └── FK usuario_id
+```
+
+### Consideraciones del modelo
+
+- `contrasena_hash` representa el valor almacenado de forma segura; la contraseña original no debe almacenarse en texto plano.
+- `organizador_id` relaciona cada evento con el usuario que posee el rol de organizador.
+- `capacidad` representa el número máximo de cupos disponibles para el evento.
+- `disponibilidad` representa los cupos que permanecen disponibles para nuevas reservas.
+- `latitud` y `longitud` permiten representar la ubicación del evento mediante el mapa.
+- `enlace_externo` permite almacenar el enlace de reserva o pago cuando el organizador utilice un servicio externo.
+- Las claves foráneas permiten mantener la relación entre usuarios, eventos, reservas, valoraciones y reportes.
 
 ## Pantallas y flujo
 
