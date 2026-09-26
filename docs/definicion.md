@@ -266,7 +266,35 @@ Para la primera versión del proyecto, NEXO no contempla:
 | RF-68 | El sistema debe permitir consultar la ubicación de un evento desde su detalle. | Visitante / Usuario | Alta |
 | RF-69 | El sistema debe abrir el enlace externo de reserva o pago definido por el organizador cuando corresponda. | Usuario | Alta |
 
+## Requerimientos no funcionales
+
+Los siguientes requerimientos establecen condiciones de calidad y comportamiento que debe cumplir NEXO.
+
+| ID | Categoría | Requerimiento |
+|---|---|---|
+| RNF-01 | Rendimiento | Las páginas principales de NEXO deben cargar su contenido inicial en un máximo de **3 segundos** bajo una conexión estable y una carga normal del sistema. |
+| RNF-02 | Rendimiento | Una búsqueda o aplicación de filtros debe mostrar una respuesta o estado de carga en un máximo de **2 segundos** bajo condiciones normales. |
+| RNF-03 | Seguridad | Las contraseñas de los usuarios no deben almacenarse en texto plano y deben utilizar un mecanismo de almacenamiento seguro mediante hash. |
+| RNF-04 | Seguridad | El sistema debe verificar la autenticación y el rol del usuario antes de permitir el acceso a funcionalidades privadas de Usuario, Organizador o Administrador. |
+| RNF-05 | Seguridad | Un usuario autenticado solo debe poder consultar y administrar la información privada asociada a su propia cuenta. |
+| RNF-06 | Seguridad | Un organizador solo debe poder modificar, publicar o cancelar eventos asociados a su propia cuenta. |
+| RNF-07 | Usabilidad | La plataforma debe ser responsive y mantener sus funciones principales utilizables en pantallas con un ancho mínimo de **360 px**. |
+| RNF-08 | Usabilidad | Los formularios de registro, inicio de sesión, creación de eventos y reserva deben mostrar mensajes claros cuando exista información inválida o incompleta. |
+| RNF-09 | Usabilidad | Cuando una búsqueda no produzca resultados, el sistema debe informar al usuario y permitir modificar los criterios de búsqueda. |
+| RNF-10 | Compatibilidad | La plataforma debe funcionar en las versiones vigentes de **Google Chrome, Mozilla Firefox y Microsoft Edge** durante el periodo de desarrollo y evaluación del proyecto. |
+| RNF-11 | Disponibilidad | Las funciones que dependan de un servicio externo deben informar al usuario cuando dicho servicio no esté disponible, sin presentar información geográfica como válida si no pudo obtenerse correctamente. |
+| RNF-12 | Integridad | El sistema debe impedir que una reserva confirmada supere la disponibilidad registrada para el evento. |
+| RNF-13 | Integridad | Después de confirmar una reserva, la disponibilidad del evento debe actualizarse de forma consistente con la cantidad reservada. |
+| RNF-14 | Mantenibilidad | La aplicación debe mantener separadas las funcionalidades correspondientes a usuarios, organizadores y administradores para facilitar futuras modificaciones. |
+| RNF-15 | Interoperabilidad | La plataforma debe permitir la integración con un servicio externo de mapas y geolocalización para representar la ubicación de los eventos. |
+| RNF-16 | Interoperabilidad | Los enlaces externos de reserva o pago registrados por un organizador deben poder abrirse desde la información correspondiente del evento. |
+
 ---
+
+## Reglas de negocio
+
+Las siguientes reglas representan las condiciones que NEXO debe respetar independientemente de la tecnología utilizada para implementar la plataforma.
+
 
 ## Pantallas y flujo
 
