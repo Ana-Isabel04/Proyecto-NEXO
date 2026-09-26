@@ -889,3 +889,7 @@ https://baymard.com/research-articles/current-state-of-checkout-ux
 Francis, C. (2025, 14 de marzo). Social media event marketing: Expert advice beyond the basics. Eventbrite.
 https://www.eventbrite.com/blog/how-to-promote-event-social-media-ds00/?
 
+### Uso de la IA en el proyecto 
+- **Chat GPT:** Se uso para la organización de los flujos de forma visual. Se le entregó el flujo en formato prosa y se le pidió que creará un diagrama apto para Markdown, se verificó que estuviera bien y se hicieron lso respectivos cambios. También se uso para el prompt que se uso para la creación de los mockups, se le entrego: tipo de diseño, letras, colores, funcionalidad por pantalla, etc. 
+- **Notebooklm:** Se uso para complementar y organizar el flujo de argumentos usados para la creación del planteamiento del problema. Se esocgieron los articulos, se leyeron y se sacó las ideas principales que ayudarian a formar el argumento. Se le pidió a la IA que verifiacará la coherencia entre los datos adquiridos en la investigación que se usarian para la posterior redacción. 
+- **Stitch IA:** Creación de mockups segun el prompt hecho con chatGPT, por restricciones del plan gratuito se tiene que modificar ciertas funcionalidades que no se harán en el proyecto, pero ya estan debidamente aclaradas en el documento.
