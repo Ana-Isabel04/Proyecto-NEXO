@@ -711,6 +711,167 @@ La siguiente relación permite comprobar que las funcionalidades principales cue
             └──────► Enlace externo de pago/reserva
 ```
 
+## Historias de usuario, casos de uso, restricciones y supuestos
+
+### Historias de usuario
+
+#### HU-01 — Buscar eventos
+
+**Como** visitante o usuario  
+**quiero** buscar eventos por nombre o términos relacionados  
+**para** encontrar actividades específicas que me interesen.
+
+**Criterios de aceptación:**
+- El usuario puede introducir un criterio de búsqueda.
+- El sistema muestra los eventos que coinciden con el criterio.
+- Si no existen coincidencias, el sistema informa que no se encontraron resultados.
+- El usuario puede modificar la búsqueda.
+
+#### HU-02 — Filtrar eventos
+
+**Como** visitante o usuario  
+**quiero** filtrar eventos por fecha, hora, categoría, precio, distancia y disponibilidad  
+**para** encontrar actividades que se ajusten a mis necesidades.
+
+**Criterios de aceptación:**
+- Se pueden seleccionar uno o varios filtros.
+- Los filtros seleccionados pueden combinarse.
+- Los resultados deben corresponder a los criterios seleccionados.
+- El usuario puede limpiar o modificar los filtros.
+
+#### HU-03 — Consultar ubicación de un evento
+
+**Como** usuario  
+**quiero** visualizar la ubicación de un evento en un mapa  
+**para** conocer dónde se realizará.
+
+**Criterios de aceptación:**
+- El evento debe tener información geográfica válida.
+- El sistema muestra la ubicación mediante un marcador.
+- El usuario puede consultar el detalle del evento desde la información mostrada.
+
+#### HU-04 — Reservar un evento
+
+**Como** usuario autenticado  
+**quiero** reservar una cantidad determinada de entradas o cupos  
+**para** asegurar mi asistencia a un evento.
+
+**Criterios de aceptación:**
+- El usuario debe haber iniciado sesión.
+- El evento debe estar disponible.
+- La cantidad solicitada no puede superar la disponibilidad.
+- Al confirmar la reserva, el sistema registra la operación y actualiza la disponibilidad.
+
+#### HU-05 — Consultar mis reservas
+
+**Como** usuario  
+**quiero** consultar mis reservas  
+**para** conocer los eventos que he reservado y el estado de cada reserva.
+
+**Criterios de aceptación:**
+- Solo se muestran las reservas asociadas al usuario autenticado.
+- Cada reserva muestra su información principal y estado.
+- Las reservas deben estar asociadas al evento correspondiente.
+
+#### HU-06 — Crear un evento
+
+**Como** organizador  
+**quiero** crear y publicar un evento  
+**para** darlo a conocer a los usuarios de NEXO.
+
+**Criterios de aceptación:**
+- El organizador debe haber iniciado sesión.
+- Debe completar los datos obligatorios del evento.
+- Debe indicar información de capacidad y disponibilidad.
+- El evento queda asociado a la cuenta del organizador.
+
+#### HU-07 — Administrar mis eventos
+
+**Como** organizador  
+**quiero** modificar o cancelar mis eventos  
+**para** mantener actualizada la información que consultan los usuarios.
+
+**Criterios de aceptación:**
+- El organizador solo puede administrar eventos propios.
+- Puede actualizar la información permitida.
+- Puede cancelar sus eventos.
+- Un evento cancelado deja de aceptar nuevas reservas.
+
+#### HU-08 — Supervisar la plataforma
+
+**Como** administrador  
+**quiero** revisar eventos, usuarios, organizadores, reservas y reportes  
+**para** supervisar el funcionamiento de NEXO.
+
+**Criterios de aceptación:**
+- Solo un administrador autenticado puede acceder al panel administrativo.
+- El administrador puede consultar la información correspondiente a sus permisos.
+- Los reportes pueden ser revisados desde el panel administrativo.
+
+---
+
+### Caso de uso completo — Realizar una reserva
+
+**Código:** CU-01  
+**Nombre:** Realizar reserva de un evento  
+**Actor principal:** Usuario autenticado
+
+**Precondiciones:**
+
+- El usuario tiene una cuenta registrada.
+- El usuario ha iniciado sesión.
+- El evento existe y está publicado.
+- El evento acepta reservas.
+- Existe disponibilidad para la cantidad solicitada.
+
+**Flujo principal:**
+
+1. El usuario busca o selecciona un evento.
+2. El sistema muestra la información detallada del evento.
+3. El usuario selecciona la opción de reservar.
+4. El sistema solicita la cantidad de entradas o cupos.
+5. El usuario indica la cantidad deseada.
+6. El sistema verifica que el evento continúe disponible.
+7. El sistema verifica que la cantidad solicitada no supere la disponibilidad.
+8. El usuario confirma la reserva.
+9. El sistema registra la reserva asociándola al usuario y al evento.
+10. El sistema actualiza la disponibilidad del evento.
+11. El sistema genera un identificador para la reserva.
+12. El sistema muestra la confirmación al usuario.
+
+**Excepciones:**
+
+- **E-01:** Si el usuario no ha iniciado sesión, el sistema solicita autenticación antes de permitir la confirmación.
+- **E-02:** Si la cantidad solicitada supera la disponibilidad, el sistema rechaza la operación e informa al usuario.
+- **E-03:** Si el evento fue cancelado o finalizó antes de confirmar la reserva, el sistema rechaza la operación e informa que el evento ya no está disponible.
+- **E-04:** Si ocurre un error al guardar la reserva, el sistema no debe presentar la reserva como confirmada y debe informar que la operación no pudo completarse.
+
+---
+
+### Restricciones
+
+- **R-01.** La primera versión de NEXO no implementará una pasarela de pagos propia.
+- **R-02.** Los procesos externos de pago o reserva dependerán del enlace o mecanismo proporcionado por el organizador.
+- **R-03.** Las reservas requieren autenticación.
+- **R-04.** Los organizadores solo pueden administrar sus propios eventos.
+- **R-05.** Los usuarios solo pueden consultar sus propias reservas.
+- **R-06.** Las funciones administrativas requieren el rol de administrador.
+- **R-07.** Una reserva no puede superar la disponibilidad del evento.
+- **R-08.** Los eventos cancelados o finalizados no aceptan nuevas reservas.
+- **R-09.** La representación en el mapa depende de que exista información geográfica válida.
+- **R-10.** La plataforma depende de servicios externos cuando un evento utiliza mapas, geolocalización o mecanismos externos de reserva o pago.
+
+### Supuestos
+
+- **S-01.** Se asume que los organizadores proporcionan información correcta y suficiente sobre sus eventos.
+- **S-02.** Se asume que los organizadores mantienen actualizados el precio, capacidad y disponibilidad de sus eventos.
+- **S-03.** Se asume que la información geográfica proporcionada por los organizadores es válida para representar la ubicación del evento.
+- **S-04.** Se asume que el servicio externo de mapas y geolocalización está disponible cuando NEXO lo necesita.
+- **S-05.** Se asume que los enlaces externos de reserva o pago proporcionados por los organizadores son válidos y funcionales.
+- **S-06.** Se asume que los usuarios proporcionan información válida durante el registro.
+- **S-07.** Se asume que las valoraciones se realizan únicamente cuando el usuario cumple las condiciones definidas por NEXO.
+- **S-08.** Se asume que el administrador utiliza sus permisos para supervisar y gestionar la información de acuerdo con las reglas establecidas para la plataforma.
+
 ## Referencias bibliográficas
 
 [1] FIXR. (2024, 24 de abril). *How Gen Z ticket buyers discover events in 2024*. FIXR.  
