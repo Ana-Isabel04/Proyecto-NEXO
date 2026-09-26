@@ -33,6 +33,21 @@ En este contexto surge la necesidad de una solución que centralice y organice l
 - **Login:** el usuario, el organizador y el administrador inician sesión mediante correo electrónico y contraseña cuando necesitan acceder a funcionalidades que requieren autenticación. La consulta y búsqueda de eventos es visible sin iniciar sesión.
 - **Pagos:** no se implementará una pasarela de pagos dentro de la plataforma. Cuando un evento requiera pago, el usuario será dirigido al enlace externo proporcionado por el organizador o podrá utilizar el medio de contacto establecido por este.
 
+### Objetivo general
+
+Desarrollar NEXO como una plataforma web que centralice el descubrimiento, consulta y reserva de eventos, permitiendo a los usuarios encontrar actividades de interés mediante criterios de búsqueda y filtrado, a los organizadores publicar y administrar sus eventos, y a los administradores supervisar la información y funcionamiento de la plataforma.
+
+### Objetivos específicos
+
+- Permitir que los visitantes consulten y encuentren eventos mediante búsqueda y filtros de categoría, fecha, hora, precio, ubicación, distancia y disponibilidad.
+- Permitir que los usuarios autenticados realicen reservas de eventos disponibles y consulten el estado de sus reservas desde la plataforma.
+- Permitir que los organizadores creen, publiquen, modifiquen y cancelen sus propios eventos, manteniendo actualizada su información.
+- Permitir que los usuarios visualicen la ubicación de los eventos mediante un mapa interactivo y consulten la información necesaria para decidir si asistir.
+- Mantener coherencia entre la capacidad, disponibilidad y reservas registradas para cada evento.
+- Proporcionar al administrador herramientas para supervisar eventos, usuarios, organizadores, reservas y contenido reportado.
+- Integrar servicios externos de mapas y geolocalización para facilitar la consulta de la ubicación de los eventos.
+- Completar el flujo principal de descubrimiento y reserva de un evento dentro de la plataforma, dejando los procesos externos de pago o reserva bajo responsabilidad del mecanismo definido por cada organizador.
+
 ## Stakeholders
 
 - **Usuarios** (stakeholder): buscan encontrar eventos de manera rápida, consultar información relevante y acceder a las opciones de reserva y localización.
@@ -44,6 +59,42 @@ En este contexto surge la necesidad de una solución que centralice y organice l
 - **Entidades gubernamentales** (stakeholder): se relacionan indirectamente con la plataforma debido a las normas y regulaciones aplicables a los eventos y a la protección de datos según las localidades que abarque el sitio.
 - **Patrocinadores y publicistas** (stakeholder): pueden utilizar la plataforma como un medio adicional para promocionar marcas, productos, servicios o eventos.
 - **Comunidad local** (stakeholder): se beneficia de una mayor visibilidad y acceso a las actividades culturales, deportivas, educativas, gastronómicas y de entretenimiento disponibles en su entorno. 
+
+## Alcance
+
+### Incluye
+
+NEXO contempla las siguientes funcionalidades y componentes dentro de su alcance:
+
+- Consulta pública de eventos publicados sin necesidad de iniciar sesión.
+- Búsqueda de eventos por nombre o términos relacionados.
+- Filtrado de eventos por fecha, hora, categoría, precio, distancia y disponibilidad.
+- Combinación de diferentes filtros para obtener resultados más específicos.
+- Visualización de eventos mediante un mapa interactivo.
+- Consulta detallada de cada evento, incluyendo nombre, descripción, fecha, hora, ubicación, precio, disponibilidad y organizador.
+- Registro e inicio de sesión de usuarios.
+- Reserva de entradas o cupos para eventos disponibles.
+- Consulta de las reservas realizadas por cada usuario.
+- Gestión de eventos por parte de los organizadores.
+- Creación, publicación, modificación y cancelación de eventos por parte de sus respectivos organizadores.
+- Consulta de las reservas asociadas a los eventos de un organizador.
+- Panel de administración para supervisar la plataforma.
+- Gestión y revisión de información relacionada con usuarios, organizadores, eventos, reservas y reportes según los permisos del administrador.
+- Integración con servicios externos de mapas y geolocalización.
+- Acceso a enlaces externos de reserva o pago cuando estos sean proporcionados por el organizador.
+
+### No incluye
+
+Para la primera versión del proyecto, NEXO no contempla:
+
+- Implementar una pasarela de pagos propia.
+- Procesar directamente pagos con tarjeta, transferencias u otros medios dentro de NEXO.
+- Sustituir las plataformas externas de pago o reserva utilizadas por los organizadores.
+- Desarrollar una aplicación móvil nativa independiente de la plataforma web.
+- Gestionar físicamente los eventos ni controlar la asistencia en el lugar del evento.
+- Garantizar la disponibilidad, funcionamiento o validez de los servicios externos utilizados por los organizadores.
+- Permitir que un organizador modifique eventos pertenecientes a otro organizador.
+- Permitir que un usuario consulte o modifique las reservas privadas de otro usuario.
 
 ## Funcionalidades
 
