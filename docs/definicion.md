@@ -45,8 +45,413 @@ En este contexto surge la necesidad de una solución que centralice y organice l
 - **Patrocinadores y publicistas** (stakeholder): pueden utilizar la plataforma como un medio adicional para promocionar marcas, productos, servicios o eventos.
 - **Comunidad local** (stakeholder): se beneficia de una mayor visibilidad y acceso a las actividades culturales, deportivas, educativas, gastronómicas y de entretenimiento disponibles en su entorno. 
 
+## Funcionalidades
+
+### Usuario
+
+- Consultar eventos publicados sin necesidad de iniciar sesión.
+- Buscar eventos por nombre, fecha, ubicación y tipo de evento.
+- Filtrar eventos por categoría, precio, distancia, hora y disponibilidad.
+- Visualizar eventos mediante un mapa interactivo.
+- Consultar la información detallada de un evento.
+- Consultar la ubicación del evento y su representación geográfica.
+- Consultar precio, disponibilidad, fecha, hora y datos del organizador.
+- Registrarse e iniciar sesión mediante correo electrónico y contraseña.
+- Realizar reservas de eventos disponibles.
+- Indicar la cantidad de entradas o cupos que desea reservar.
+- Recibir la confirmación de una reserva.
+- Consultar sus reservas realizadas y el estado de cada una.
+- Acceder a enlaces externos de pago o reserva cuando el organizador gestione el proceso fuera de NEXO.
+- Consultar su información de perfil.
+- Registrar una valoración o comentario sobre un evento asistido, cuando cumpla las condiciones definidas por la plataforma.
+
+### Organizador
+
+- Registrarse e iniciar sesión mediante correo electrónico y contraseña.
+- Acceder a un panel de administración de sus eventos.
+- Crear nuevos eventos.
+- Registrar nombre, descripción, categoría, fecha, hora, ubicación, precio, capacidad y disponibilidad.
+- Asociar una imagen al evento.
+- Definir un enlace externo de reserva o pago.
+- Definir un medio de contacto para los usuarios.
+- Publicar eventos que cumplan la información obligatoria.
+- Consultar sus eventos publicados, activos, cancelados y finalizados.
+- Modificar la información de sus propios eventos.
+- Actualizar precio, capacidad y disponibilidad.
+- Consultar las reservas asociadas a sus eventos.
+- Cancelar sus propios eventos.
+- Consultar la información necesaria para gestionar la asistencia de los usuarios.
+
+### Administrador
+
+- Iniciar sesión mediante correo electrónico y contraseña.
+- Acceder a un panel administrativo.
+- Consultar los eventos registrados en la plataforma.
+- Revisar la información de los eventos publicados.
+- Gestionar eventos cuando sea necesario para mantener la integridad de la plataforma.
+- Ocultar, aprobar o reportar eventos de acuerdo con las reglas definidas.
+- Consultar y gestionar usuarios y organizadores.
+- Consultar información relacionada con las reservas.
+- Revisar eventos o contenido reportado.
+- Gestionar incidencias relacionadas con eventos, usuarios y reservas.
+
+###  Servicios externos
+
+#### Servicio de mapas y geolocalización
+
+- Proporcionar coordenadas o ubicación geográfica de los eventos.
+- Permitir representar los eventos mediante marcadores.
+- Permitir mostrar la ubicación del evento sobre un mapa.
+
+#### Servicios externos de reserva o pago
+
+- Recibir al usuario mediante un enlace externo proporcionado por el organizador.
+- Permitir que el usuario complete fuera de NEXO el proceso de pago o reserva cuando corresponda.
 
 
+## Requerimientos funcionales
+
+### Autenticación y control de acceso
+
+| ID | Requerimiento | Rol | Prioridad |
+|---|---|---|---|
+| RF-01 | El sistema debe permitir iniciar sesión mediante correo electrónico y contraseña. | Usuario / Organizador / Administrador | Alta |
+| RF-02 | El sistema debe validar que las credenciales proporcionadas correspondan a una cuenta registrada y activa. | Usuario / Organizador / Administrador | Alta |
+| RF-03 | El sistema debe identificar el rol asociado a la cuenta autenticada y habilitar únicamente las funcionalidades correspondientes. | Usuario / Organizador / Administrador | Alta |
+| RF-04 | El sistema debe permitir consultar y buscar eventos publicados sin iniciar sesión. | Visitante / Usuario | Alta |
+| RF-05 | El sistema debe restringir las operaciones de reserva y consulta de reservas a usuarios autenticados. | Usuario | Alta |
+| RF-06 | El sistema debe impedir que un usuario acceda mediante la interfaz a funciones exclusivas de organizador o administrador. | Usuario | Alta |
+| RF-07 | El sistema debe permitir cerrar la sesión de la cuenta autenticada. | Usuario / Organizador / Administrador | Media |
+
+### Descubrimiento, búsqueda y consulta de eventos
+
+| ID | Requerimiento | Rol | Prioridad |
+|---|---|---|---|
+| RF-08 | El sistema debe mostrar los eventos publicados y vigentes disponibles para consulta. | Visitante / Usuario | Alta |
+| RF-09 | El sistema debe permitir buscar eventos por nombre o términos relacionados con el evento. | Visitante / Usuario | Alta |
+| RF-10 | El sistema debe permitir filtrar eventos por fecha y hora. | Visitante / Usuario | Alta |
+| RF-11 | El sistema debe permitir filtrar eventos por categoría. | Visitante / Usuario | Alta |
+| RF-12 | El sistema debe permitir filtrar eventos por precio, incluyendo la identificación de eventos gratuitos. | Visitante / Usuario | Alta |
+| RF-13 | El sistema debe permitir filtrar eventos por distancia respecto a una ubicación de referencia cuando exista información geográfica disponible. | Visitante / Usuario | Alta |
+| RF-14 | El sistema debe permitir consultar la disponibilidad de un evento. | Visitante / Usuario | Alta |
+| RF-15 | El sistema debe permitir combinar varios filtros en una misma búsqueda. | Visitante / Usuario | Alta |
+| RF-16 | El sistema debe mostrar únicamente los eventos que cumplan los criterios de búsqueda y filtrado seleccionados. | Visitante / Usuario | Alta |
+| RF-17 | El sistema debe informar cuando una búsqueda o combinación de filtros no produzca resultados. | Visitante / Usuario | Media |
+| RF-18 | El sistema debe mostrar los eventos disponibles sobre un mapa interactivo mediante marcadores geográficos. | Visitante / Usuario | Alta |
+| RF-19 | El sistema debe permitir seleccionar un marcador para consultar información resumida del evento. | Visitante / Usuario | Alta |
+| RF-20 | El sistema debe mostrar el detalle completo de un evento seleccionado. | Visitante / Usuario | Alta |
+| RF-21 | El detalle del evento debe mostrar como mínimo nombre, descripción, categoría, fecha, hora, ubicación, precio, disponibilidad y organizador. | Visitante / Usuario | Alta |
+| RF-22 | El sistema debe mostrar la ubicación del evento mediante un servicio de mapas y geolocalización. | Visitante / Usuario | Alta |
+| RF-23 | El sistema debe mostrar el estado actual del evento cuando corresponda: publicado, disponible, agotado, cancelado o finalizado. | Visitante / Usuario | Alta |
+
+### Reservas
+
+| ID | Requerimiento | Rol | Prioridad |
+|---|---|---|---|
+| RF-24 | El sistema debe permitir a un usuario autenticado iniciar una reserva desde el detalle de un evento disponible. | Usuario | Alta |
+| RF-25 | El sistema debe permitir seleccionar la cantidad de entradas o cupos que desea reservar. | Usuario | Alta |
+| RF-26 | El sistema debe verificar la disponibilidad antes de confirmar una reserva. | Usuario | Alta |
+| RF-27 | El sistema no debe permitir confirmar una reserva cuando la cantidad solicitada supere la disponibilidad existente. | Usuario | Alta |
+| RF-28 | El sistema debe registrar la reserva asociándola al usuario autenticado y al evento seleccionado. | Usuario | Alta |
+| RF-29 | El sistema debe actualizar la disponibilidad del evento después de confirmar una reserva. | Usuario / Sistema | Alta |
+| RF-30 | El sistema debe generar un identificador único para cada reserva confirmada. | Usuario / Sistema | Alta |
+| RF-31 | El sistema debe mostrar una pantalla de confirmación después de registrar correctamente una reserva. | Usuario | Alta |
+| RF-32 | La confirmación debe mostrar como mínimo número de reserva, evento, fecha, hora, ubicación, cantidad de entradas y estado de la reserva. | Usuario | Alta |
+| RF-33 | El sistema debe permitir consultar las reservas asociadas al usuario autenticado. | Usuario | Alta |
+| RF-34 | El sistema debe mostrar el estado de cada reserva del usuario. | Usuario | Alta |
+| RF-35 | Cuando el evento utilice un mecanismo externo de pago o reserva, el sistema debe mostrar el enlace o medio de contacto proporcionado por el organizador. | Usuario | Alta |
+| RF-36 | El sistema no debe procesar directamente pagos mediante una pasarela propia en la primera versión. | Usuario / Sistema | Alta |
+
+### Perfil y experiencia del usuario
+
+| ID | Requerimiento | Rol | Prioridad |
+|---|---|---|---|
+| RF-37 | El sistema debe permitir al usuario autenticado consultar su información de perfil. | Usuario | Media |
+| RF-38 | El sistema debe permitir registrar un comentario o valoración sobre un evento cuando el usuario cumpla las condiciones definidas para realizarla. | Usuario | Media |
+| RF-39 | El sistema debe asociar cada comentario o valoración al usuario y al evento correspondiente. | Usuario / Sistema | Media |
+| RF-40 | El sistema debe impedir que un usuario registre una experiencia sobre un evento que no corresponda a una asistencia o reserva válida, de acuerdo con las reglas de negocio definidas. | Usuario / Sistema | Media |
+
+### Gestión de eventos por el organizador
+
+| ID | Requerimiento | Rol | Prioridad |
+|---|---|---|---|
+| RF-41 | El sistema debe permitir al organizador acceder a su panel de gestión. | Organizador | Alta |
+| RF-42 | El sistema debe permitir crear un evento desde el panel del organizador. | Organizador | Alta |
+| RF-43 | El sistema debe permitir registrar nombre, descripción, categoría, fecha, hora y ubicación del evento. | Organizador | Alta |
+| RF-44 | El sistema debe permitir registrar precio y capacidad del evento. | Organizador | Alta |
+| RF-45 | El sistema debe permitir registrar la disponibilidad inicial del evento. | Organizador | Alta |
+| RF-46 | El sistema debe permitir registrar un enlace externo de reserva o pago. | Organizador | Alta |
+| RF-47 | El sistema debe permitir registrar información de contacto relacionada con el evento. | Organizador | Alta |
+| RF-48 | El sistema debe validar los campos obligatorios antes de publicar un evento. | Organizador | Alta |
+| RF-49 | El sistema debe permitir publicar un evento cuando toda la información obligatoria sea válida. | Organizador | Alta |
+| RF-50 | El sistema debe mostrar al organizador únicamente los eventos asociados a su cuenta dentro de la sección de gestión propia. | Organizador | Alta |
+| RF-51 | El sistema debe permitir al organizador modificar sus propios eventos. | Organizador | Alta |
+| RF-52 | El sistema debe permitir actualizar precio, capacidad y disponibilidad de un evento propio cuando su estado lo permita. | Organizador | Alta |
+| RF-53 | El sistema debe permitir cancelar un evento creado por el organizador. | Organizador | Alta |
+| RF-54 | El sistema debe impedir que un organizador modifique o elimine eventos pertenecientes a otro organizador. | Organizador | Alta |
+| RF-55 | El sistema debe permitir al organizador consultar las reservas asociadas a sus eventos. | Organizador | Alta |
+| RF-56 | El sistema debe mostrar al organizador información suficiente para conocer la cantidad de reservas y cupos disponibles de cada evento. | Organizador | Alta |
+
+### Administración de la plataforma
+
+| ID | Requerimiento | Rol | Prioridad |
+|---|---|---|---|
+| RF-57 | El sistema debe permitir al administrador acceder al panel administrativo. | Administrador | Alta |
+| RF-58 | El sistema debe permitir al administrador consultar los eventos registrados en la plataforma. | Administrador | Alta |
+| RF-59 | El sistema debe permitir al administrador revisar la información de un evento. | Administrador | Alta |
+| RF-60 | El sistema debe permitir al administrador aprobar, ocultar o reportar eventos de acuerdo con las reglas establecidas. | Administrador | Alta |
+| RF-61 | El sistema debe permitir al administrador consultar usuarios y organizadores registrados. | Administrador | Media |
+| RF-62 | El sistema debe permitir al administrador gestionar las cuentas de usuarios y organizadores de acuerdo con los permisos definidos. | Administrador | Media |
+| RF-63 | El sistema debe permitir al administrador consultar información relacionada con las reservas. | Administrador | Alta |
+| RF-64 | El sistema debe permitir al administrador consultar eventos reportados y su información asociada. | Administrador | Media |
+| RF-65 | El sistema debe restringir el acceso al panel administrativo exclusivamente a cuentas con rol de administrador. | Administrador / Sistema | Alta |
+
+### Integración con mapas y servicios externos
+
+| ID | Requerimiento | Rol | Prioridad |
+|---|---|---|---|
+| RF-66 | El sistema debe integrar un servicio externo de mapas y geolocalización para representar la ubicación de los eventos. | Sistema | Alta |
+| RF-67 | El sistema debe almacenar o utilizar la información geográfica necesaria para representar cada evento en el mapa. | Sistema | Alta |
+| RF-68 | El sistema debe permitir consultar la ubicación de un evento desde su detalle. | Visitante / Usuario | Alta |
+| RF-69 | El sistema debe abrir el enlace externo de reserva o pago definido por el organizador cuando corresponda. | Usuario | Alta |
+
+---
+
+## Pantallas y flujo
+
+
+### Pantallas del usuario
+
+| Pantalla | Rol | Para qué sirve | Acceso / navegación |
+|---|---|---|---|
+| Inicio / Explorar eventos | Visitante / Usuario | Presenta el acceso principal a la búsqueda, categorías, eventos próximos y mapa. | Entrada principal → Mapa / Resultados / Detalle |
+| Mapa de eventos | Visitante / Usuario | Permite visualizar eventos geográficamente y consultar marcadores. | Inicio → Mapa → Marcador → Detalle |
+| Resultados de búsqueda | Visitante / Usuario | Presenta los eventos que coinciden con los criterios de búsqueda y filtros. | Inicio / Mapa → Buscar o Filtrar → Resultados |
+| Detalle del evento | Visitante / Usuario | Presenta toda la información necesaria del evento, ubicación, disponibilidad y acciones disponibles. | Resultados / Mapa → Detalle |
+| Inicio de sesión | Usuario | Permite autenticar la cuenta para acceder a operaciones privadas. | Acción privada → Inicio de sesión → Área autenticada |
+| Realizar reserva | Usuario | Permite seleccionar la cantidad de entradas y confirmar la reserva. | Detalle → Reservar → Reserva |
+| Confirmación de reserva | Usuario | Muestra el resultado de una reserva registrada y su identificador. | Reserva → Confirmación |
+| Mis reservas | Usuario | Permite consultar las reservas propias y su estado. | Área autenticada → Mis reservas → Detalle de reserva |
+| Perfil | Usuario | Permite consultar la información de la cuenta autenticada. | Área autenticada → Perfil |
+| Experiencia / valoración | Usuario | Permite registrar una valoración o comentario sobre un evento cuando corresponda. | Mis reservas / evento asistido → Valorar |
+
+### Flujo principal del usuario
+
+```text
+Inicio / Explorar
+       │
+       ├───────────────► Mapa de eventos
+       │                      │
+       │                      ▼
+       └───────────────► Resultados
+                              │
+                              ▼
+                       Detalle del evento
+                              │
+                    ┌─────────┴─────────┐
+                    │                   │
+                    ▼                   ▼
+               Iniciar sesión      Enlace externo
+                    │              de pago/reserva
+                    ▼
+                Reserva
+                    │
+                    ▼
+             Confirmación
+                    │
+                    ▼
+              Mis reservas
+```
+
+### Navegación alternativa del usuario
+
+```text
+Área autenticada
+      │
+      ├── Mis reservas ──► Detalle de reserva
+      │                         │
+      │                         ▼
+      │                    Valorar evento
+      │
+      └── Perfil
+```
+
+### Pantallas del organizador
+
+| Pantalla | Rol | Para qué sirve | Acceso / navegación |
+|---|---|---|---|
+| Inicio de sesión | Organizador | Permite autenticar al organizador antes de acceder a funciones de gestión. | Inicio → Iniciar sesión → Panel |
+| Panel del organizador | Organizador | Presenta un resumen de sus eventos, disponibilidad y accesos a las funciones de administración. | Inicio de sesión → Panel |
+| Mis eventos | Organizador | Lista los eventos creados por el organizador y permite seleccionar uno para gestionarlo. | Panel → Mis eventos |
+| Crear evento | Organizador | Permite iniciar el registro de un nuevo evento. | Panel / Mis eventos → Crear evento |
+| Formulario del evento | Organizador | Permite registrar información general, categoría, fecha, hora, ubicación, precio, capacidad, contacto y enlace externo. | Crear evento → Formulario |
+| Vista previa / publicar | Organizador | Permite revisar la información antes de hacer público el evento. | Formulario → Vista previa → Publicar |
+| Editar evento | Organizador | Permite modificar la información de un evento propio. | Mis eventos → Seleccionar evento → Editar |
+| Reservas del evento | Organizador | Permite consultar las reservas asociadas a un evento y la cantidad de cupos disponibles. | Mis eventos → Evento → Reservas |
+
+### Flujo principal del organizador
+
+```text
+Inicio
+   │
+   ▼
+Inicio de sesión
+   │
+   ▼
+Panel del organizador
+   │
+   ├───────────────► Mis eventos
+   │                     │
+   │                     ├────────► Editar evento
+   │                     │
+   │                     └────────► Reservas del evento
+   │
+   └───────────────► Crear evento
+                         │
+                         ▼
+                  Formulario del evento
+                         │
+                         ▼
+                    Vista previa
+                         │
+                         ▼
+                      Publicar
+                         │
+                         ▼
+                  Evento publicado
+```
+
+### Pantallas del administrador
+
+| Pantalla | Rol | Para qué sirve | Acceso / navegación |
+|---|---|---|---|
+| Inicio de sesión administrativo | Administrador | Permite autenticar al administrador y controlar el acceso al panel. | Inicio → Iniciar sesión → Panel administrativo |
+| Panel administrativo | Administrador | Presenta los módulos de gestión y un resumen de información relevante. | Inicio de sesión → Panel |
+| Gestión de eventos | Administrador | Permite consultar los eventos registrados y sus estados. | Panel → Eventos |
+| Detalle / revisión del evento | Administrador | Permite revisar la información de un evento y ejecutar acciones administrativas. | Gestión de eventos → Seleccionar evento |
+| Gestión de usuarios y organizadores | Administrador | Permite consultar y gestionar las cuentas registradas según los permisos establecidos. | Panel → Usuarios |
+| Gestión de reservas | Administrador | Permite consultar información relacionada con las reservas de la plataforma. | Panel → Reservas |
+| Reportes | Administrador | Permite consultar eventos o contenido reportado. | Panel → Reportes |
+| Revisión de reporte | Administrador | Permite analizar la información reportada y ejecutar la acción administrativa correspondiente. | Reportes → Seleccionar reporte |
+
+### Flujo principal del administrador
+
+```text
+Inicio
+   │
+   ▼
+Inicio de sesión
+   │
+   ▼
+Panel administrativo
+   │
+   ├──────────────► Gestión de eventos
+   │                    │
+   │                    ▼
+   │              Revisión del evento
+   │                    │
+   │          ┌─────────┼─────────┐
+   │          ▼         ▼         ▼
+   │       Aprobar    Ocultar   Reportar
+   │
+   ├──────────────► Usuarios y organizadores
+   │
+   ├──────────────► Gestión de reservas
+   │
+   └──────────────► Reportes
+                        │
+                        ▼
+                  Revisión de reporte
+```
+
+### Pantallas compartidas y navegación general
+
+| Pantalla | Rol | Para qué sirve | Condición de acceso |
+|---|---|---|---|
+| Inicio | Visitante / Usuario / Organizador / Administrador | Punto de entrada general a la plataforma. | Pública |
+| Inicio de sesión | Usuario / Organizador / Administrador | Autentica las cuentas que requieren funciones privadas. | Pública |
+| Detalle del evento | Visitante / Usuario | Consulta información pública del evento. | Pública |
+| Mapa de eventos | Visitante / Usuario | Permite descubrir eventos mediante ubicación geográfica. | Pública |
+| Página de error / acceso denegado | Todos | Informa cuando una operación no puede ejecutarse o el rol no tiene permisos. | Según operación |
+
+### Reglas de navegación
+
+1. La consulta y búsqueda de eventos no requiere autenticación.
+2. El usuario debe autenticarse antes de confirmar una reserva.
+3. El organizador debe autenticarse antes de acceder a su panel.
+4. El administrador debe autenticarse antes de acceder al panel administrativo.
+5. Un organizador solo podrá acceder a la gestión de los eventos asociados a su cuenta.
+  Un usuario solo podrá consultar sus propias reservas.
+7. Las funcionalidades administrativas no deben estar disponibles para usuarios u organizadores.
+8. Un evento cancelado debe permanecer consultable cuando corresponda, pero no debe permitir nuevas reservas.
+9. Un evento finalizado no debe permitir nuevas reservas.
+10. Si el pago o reserva se realiza externamente, la navegación debe dirigir al enlace o medio de contacto proporcionado por el organizador.
+11. Si una búsqueda no devuelve resultados, el sistema debe conservar al usuario en el contexto de búsqueda y permitir modificar los criterios.
+12. Si una reserva no puede completarse por falta de disponibilidad, el sistema debe informar la situación sin registrar una reserva incompleta.
+
+---
+
+## Trazabilidad básica entre funcionalidades, requerimientos y pantallas
+
+La siguiente relación permite comprobar que las funcionalidades principales cuentan con requerimientos y una representación en la interfaz.
+
+| Funcionalidad | Requerimientos relacionados | Pantallas principales |
+|---|---|---|
+| Buscar y filtrar eventos | RF-09 a RF-17 | Inicio, Resultados, Mapa |
+| Consultar evento | RF-20 a RF-23 | Detalle del evento |
+| Consultar ubicación | RF-18, RF-19, RF-22 | Mapa, Detalle |
+| Realizar reserva | RF-24 a RF-35 | Inicio de sesión, Detalle, Reserva, Confirmación |
+| Consultar reservas propias | RF-33 y RF-34 | Mis reservas, Detalle de reserva |
+| Valorar una experiencia | RF-37 a RF-40 | Mis reservas, Experiencia / valoración |
+| Crear y publicar evento | RF-41 a RF-49 | Panel, Crear evento, Formulario, Vista previa |
+| Modificar evento | RF-50 a RF-54 | Mis eventos, Editar evento |
+| Gestionar reservas del organizador | RF-55 y RF-56 | Mis eventos, Reservas del evento |
+| Administrar eventos | RF-57 a RF-60 | Panel administrativo, Gestión de eventos, Revisión |
+| Gestionar usuarios | RF-61 y RF-62 | Usuarios y organizadores |
+| Consultar reservas administrativamente | RF-63 | Gestión de reservas |
+| Gestionar reportes | RF-64 | Reportes, Revisión de reporte |
+| Controlar acceso por rol | RF-01 a RF-07, RF-65 | Inicio de sesión, paneles por rol |
+
+---
+
+## Flujo general de la plataforma
+
+```text
+                         ┌───────────────────────┐
+                         │        INICIO         │
+                         └───────────┬───────────┘
+                                     │
+                    ┌────────────────┼────────────────┐
+                    │                │                │
+                    ▼                ▼                ▼
+             Explorar eventos   Iniciar sesión    Mapa de eventos
+                    │                │
+                    ▼                ▼
+             Buscar / filtrar    Identificar rol
+                    │                │
+                    ▼        ┌───────┼────────┐
+             Resultados      │       │        │
+                    │        ▼       ▼        ▼
+                    ▼     Usuario  Organizador Administrador
+             Detalle evento   │       │        │
+                    │         │       │        │
+            ┌───────┴──────┐  │       │        │
+            │              │  │       │        │
+            ▼              ▼  ▼       ▼        ▼
+        Consultar      Reservar   Panel    Panel
+        información        │      organizador administrativo
+            │              │       │        │
+            │              ▼       │        ├── Eventos
+            │         Confirmación │        ├── Usuarios
+            │              │       │        ├── Reservas
+            │              ▼       │        └── Reportes
+            │         Mis reservas│
+            │                      ├── Mis eventos
+            │                      ├── Crear evento
+            │                      └── Reservas
+            │
+            └──────► Enlace externo de pago/reserva
+```
 
 ## Referencias bibliográficas
 
