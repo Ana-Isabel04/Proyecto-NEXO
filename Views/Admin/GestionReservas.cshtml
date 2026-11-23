@@ -1,0 +1,86 @@
+@model NexoWeb.Models.ViewModels.AdminGestionReservasViewModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Reservas Globales";
+}
+
+<div class="flex flex-col w-full">
+    <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-space-lg mb-space-xl">
+        <div class="flex flex-col gap-space-xs">
+            <span class="font-label-sm text-label-sm uppercase tracking-widest text-secondary font-semibold">Supervisión Transaccional</span>
+            <h1 class="font-headline-lg text-headline-lg text-primary tracking-tight">Monitor Global de Reservas</h1>
+            <p class="font-body-md text-body-md text-on-surface-variant">
+                Consulta todas las reservas realizadas en la plataforma y gestiona cancelaciones administrativas con liberación automática de aforo.
+            </p>
+        </div>
+    </div>
+
+    <!-- Tabla Global de Reservas -->
+    <div class="bg-surface-container-lowest rounded-2xl shadow-sm overflow-hidden">
+        @if (Model?.Reservas == null || !Model.Reservas.Any())
+        {
+            <div class="p-space-xl text-center">
+                <p class="font-headline-sm text-headline-sm text-primary">No existen reservas registradas aún</p>
+            </div>
+        }
+        else
+        {
+            <div class="overflow-x-auto">
+                <table class="w-full text-left font-body-sm text-body-sm">
+                    <thead>
+                        <tr class="bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">
+                            <th class="py-space-md px-space-md font-semibold">Código</th>
+                            <th class="py-space-md px-space-md font-semibold">Evento</th>
+                            <th class="py-space-md px-space-md font-semibold">Usuario Asistente</th>
+                            <th class="py-space-md px-space-md font-semibold text-center">Cupos</th>
+                            <th class="py-space-md px-space-md font-semibold">Fecha</th>
+                            <th class="py-space-md px-space-md font-semibold">Estado</th>
+                            <th class="py-space-md px-space-md font-semibold text-right">Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-surface-container-low">
+                        @foreach (var r in Model.Reservas)
+                        {
+                            <tr class="hover:bg-surface-container-low/40 transition-colors">
+                                <td class="py-space-md px-space-md font-mono font-bold text-primary">#@r.CodigoReserva</td>
+                                <td class="py-space-md px-space-md font-semibold text-on-surface">@r.NombreEvento</td>
+                                <td class="py-space-md px-space-md">
+                                    <div class="font-semibold text-on-surface">@r.NombreUsuario</div>
+                                    <div class="text-on-surface-variant text-xs">@r.CorreoUsuario</div>
+                                </td>
+                                <td class="py-space-md px-space-md text-center font-bold">@r.CantidadCupos</td>
+                                <td class="py-space-md px-space-md text-on-surface-variant">@r.FechaReserva.ToString("dd MMM yyyy, HH:mm")</td>
+                                <td class="py-space-md px-space-md">
+                                    @if (r.Estado == "Confirmada")
+                                    {
+                                        <span class="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-800 font-label-sm text-label-sm font-semibold">Confirmada</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="px-2.5 py-1 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm font-semibold">@r.Estado</span>
+                                    }
+                                </td>
+                                <td class="py-space-md px-space-md text-right">
+                                    @if (r.Estado == "Confirmada")
+                                    {
+                                        <form asp-controller="Admin" asp-action="CancelarReservaAdmin" method="post" class="inline"
+                                              onsubmit="return confirm('¿Cancelar esta reserva y devolver los cupos al evento?');">
+                                            <input type="hidden" name="reservaId" value="@r.Id" />
+                                            <button type="submit" class="px-3 py-1.5 rounded-lg bg-error-container text-on-error-container hover:opacity-90 font-label-sm text-label-sm font-bold">
+                                                Cancelar Reserva
+                                            </button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-on-surface-variant text-xs">Sin acciones</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

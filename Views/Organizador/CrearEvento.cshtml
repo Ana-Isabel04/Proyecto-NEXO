@@ -1,0 +1,328 @@
+@model NexoWeb.Models.ViewModels.EventoFormularioViewModel
+@{
+    bool esEdicion = Model != null && Model.Id > 0;
+    ViewData["Title"] = esEdicion ? "Editar Evento" : "Crear Nuevo Evento";
+}
+
+<div class="flex flex-col w-full">
+    <!-- Encabezado -->
+    <section class="w-full bg-surface-container-low px-margin-desktop py-space-lg shadow-sm">
+        <div class="max-w-[1440px] mx-auto flex flex-col md:flex-row md:items-center justify-between gap-space-sm">
+            <div class="flex items-center gap-space-sm">
+                <a asp-controller="Organizador" asp-action="Panel" class="text-on-surface-variant hover:text-primary flex items-center gap-1 font-label-md text-label-md">
+                    <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+                    <span>Panel</span>
+                </a>
+                <span class="text-outline-variant font-body-sm">/</span>
+                <h1 class="font-headline-sm text-headline-sm text-primary">
+                    @(esEdicion ? $"Editar Evento: {Model.Nombre}" : "Publicar Nueva Experiencia Cultural")
+                </h1>
+            </div>
+            <span class="font-label-sm text-label-sm uppercase tracking-wider text-secondary font-bold">
+                Validación Activa • Cliente y Servidor
+            </span>
+        </div>
+    </section>
+
+    <!-- Superficie Principal: Formulario (65%) + Vista Previa Sticky (35%) -->
+    <div class="max-w-[1440px] w-full mx-auto px-margin-desktop py-space-xl">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-start">
+
+            <!-- COLUMNA IZQUIERDA: Formulario -->
+            <form asp-controller="Organizador" asp-action="@(esEdicion ? "EditarEvento" : "CrearEvento")" method="post"
+                  class="lg:col-span-8 flex flex-col gap-space-xl" id="formulario-evento">
+
+                <input type="hidden" asp-for="Id" />
+                <div asp-validation-summary="ModelOnly" class="p-space-md rounded-xl bg-error-container text-on-error-container font-body-sm"></div>
+
+                <!-- 1. Título y Descripción -->
+                <section class="bg-surface-container-lowest p-space-xl rounded-xl shadow-md flex flex-col gap-space-md">
+                    <div class="flex items-center justify-between">
+                        <label asp-for="Nombre" class="font-title-lg text-title-lg text-primary flex items-center gap-2">
+                            <span class="material-symbols-outlined text-[20px] text-secondary">stylus</span>
+                            Título y Descripción del Evento
+                        </label>
+                        <span class="font-label-sm text-label-sm text-on-surface-variant font-semibold" id="contador-titulo">0 / 100 caracteres</span>
+                    </div>
+
+                    <div class="flex flex-col gap-space-xs">
+                        <input asp-for="Nombre" id="input-titulo" maxlength="100"
+                               class="w-full px-space-md py-space-sm bg-surface-container-low rounded-xl text-on-surface font-headline-sm text-headline-sm focus:bg-surface-container-lowest focus:ring-1 focus:ring-primary transition-all outline-none"
+                               placeholder="Ej. Noche de Jazz & Poesía en Claustro" />
+                        <span asp-validation-for="Nombre" class="text-error font-label-sm"></span>
+                    </div>
+
+                    <div class="flex flex-col gap-space-xs">
+                        <label asp-for="Descripcion" class="font-label-md text-label-md text-on-surface font-semibold">Descripción detallada</label>
+                        <textarea asp-for="Descripcion" rows="4"
+                                  class="w-full p-space-md bg-surface-container-low rounded-xl text-on-surface font-body-md text-body-md focus:bg-surface-container-lowest focus:ring-1 focus:ring-primary transition-all outline-none"
+                                  placeholder="Describe el programa, artistas invitados, recomendaciones de asistencia..."></textarea>
+                        <span asp-validation-for="Descripcion" class="text-error font-label-sm"></span>
+                    </div>
+                </section>
+
+                <!-- 2. Selector de Categoría -->
+                <section class="bg-surface-container-lowest p-space-xl rounded-xl shadow-md flex flex-col gap-space-md">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h2 class="font-title-lg text-title-lg text-primary flex items-center gap-2">
+                                <span class="material-symbols-outlined text-[20px] text-secondary">interests</span>
+                                Categoría Principal
+                            </h2>
+                            <p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Define la clasificación del evento en la cartelera.</p>
+                        </div>
+                        <span class="px-2 py-0.5 rounded-full bg-surface-container font-label-sm text-label-sm text-primary">Obligatorio</span>
+                    </div>
+
+                    <input type="hidden" asp-for="Categoria" id="input-categoria" value="@(Model?.Categoria ?? "Cultural")" />
+
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-space-sm pt-space-xs" id="grupo-categorias">
+                        @{
+                            var categorias = new[] {
+                                ("Conciertos", "#f43f5e"),
+                                ("Tecnología", "#0284c7"),
+                                ("Deportivo", "#16a34a"),
+                                ("Gastronómico", "#ea580c"),
+                                ("Educativo", "#4f46e5"),
+                                ("Cultural", "#c2410c"),
+                                ("Entretenimiento", "#d97706")
+                            };
+                            var categoriaActual = Model?.Categoria ?? "Cultural";
+                        }
+                        @foreach (var (nombreCat, colorHex) in categorias)
+                        {
+                            bool activa = categoriaActual == nombreCat;
+                            <button type="button" data-categoria="@nombreCat"
+                                    class="btn-categoria flex items-center gap-space-xs px-space-md py-space-sm rounded-xl font-label-md text-label-md transition-all text-left @(activa ? "bg-primary text-on-primary shadow-sm" : "bg-surface-container-low text-on-surface hover:bg-surface-container-high")">
+                                <span class="w-3 h-3 rounded-full shrink-0" style="background-color: @colorHex;"></span>
+                                <span class="truncate">@nombreCat</span>
+                            </button>
+                        }
+                    </div>
+                    <span asp-validation-for="Categoria" class="text-error font-label-sm"></span>
+                </section>
+
+                <!-- 3. Fecha y Hora -->
+                <section class="bg-surface-container-lowest p-space-xl rounded-xl shadow-md flex flex-col gap-space-lg">
+                    <h2 class="font-title-lg text-title-lg text-primary flex items-center gap-2">
+                        <span class="material-symbols-outlined text-[20px] text-secondary">calendar_today</span>
+                        Fecha y Horario
+                    </h2>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-space-lg">
+                        <div class="flex flex-col gap-space-xs">
+                            <label asp-for="Fecha" class="font-label-md text-label-md text-on-surface font-semibold">Fecha del Evento</label>
+                            <div class="flex items-center gap-space-xs bg-surface-container-low px-space-md py-space-sm rounded-xl">
+                                <span class="material-symbols-outlined text-[18px] text-outline">event</span>
+                                <input asp-for="Fecha" id="input-fecha" type="date" class="bg-transparent w-full outline-none font-body-md text-body-md text-on-surface" />
+                            </div>
+                            <span asp-validation-for="Fecha" class="text-error font-label-sm"></span>
+                        </div>
+
+                        <div class="flex flex-col gap-space-xs">
+                            <label asp-for="Hora" class="font-label-md text-label-md text-on-surface font-semibold">Hora de Inicio</label>
+                            <div class="flex items-center gap-space-xs bg-surface-container-low px-space-md py-space-sm rounded-xl">
+                                <span class="material-symbols-outlined text-[18px] text-outline">schedule</span>
+                                <input asp-for="Hora" id="input-hora" type="time" class="bg-transparent w-full outline-none font-body-md text-body-md text-on-surface" />
+                            </div>
+                            <span asp-validation-for="Hora" class="text-error font-label-sm"></span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 4. Ubicación y Coordenadas (RF-43, RF-67) -->
+                <section class="bg-surface-container-lowest p-space-xl rounded-xl shadow-md flex flex-col gap-space-lg">
+                    <div>
+                        <h2 class="font-title-lg text-title-lg text-primary flex items-center gap-2">
+                            <span class="material-symbols-outlined text-[20px] text-secondary">pin_drop</span>
+                            Ubicación y Geolocalización
+                        </h2>
+                        <p class="font-body-sm text-body-sm text-on-surface-variant">Dirección del recinto y coordenadas para el mapa interactivo.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-space-md">
+                        <div class="flex flex-col gap-space-xs">
+                            <label asp-for="Ubicacion" class="font-label-md text-label-md text-on-surface font-semibold">Nombre del Recinto y Dirección</label>
+                            <input asp-for="Ubicacion" id="input-ubicacion"
+                                   class="px-space-md py-space-sm bg-surface-container-low rounded-xl text-on-surface font-body-md text-body-md outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-primary"
+                                   placeholder="Ej. Teatro Pablo Tobón Uribe, Medellín" />
+                            <span asp-validation-for="Ubicacion" class="text-error font-label-sm"></span>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-space-sm">
+                            <div class="flex flex-col gap-space-xs">
+                                <label asp-for="Latitud" class="font-label-md text-label-md text-on-surface font-semibold">Latitud</label>
+                                <input asp-for="Latitud" type="number" step="any"
+                                       class="px-space-md py-space-sm bg-surface-container-low rounded-xl text-on-surface font-body-md text-body-md outline-none"
+                                       placeholder="6.2442" />
+                            </div>
+                            <div class="flex flex-col gap-space-xs">
+                                <label asp-for="Longitud" class="font-label-md text-label-md text-on-surface font-semibold">Longitud</label>
+                                <input asp-for="Longitud" type="number" step="any"
+                                       class="px-space-md py-space-sm bg-surface-container-low rounded-xl text-on-surface font-body-md text-body-md outline-none"
+                                       placeholder="-75.5812" />
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 5. Aforo, Disponibilidad y Precio (RF-44, RF-45, RF-52) -->
+                <section class="bg-surface-container-lowest p-space-xl rounded-xl shadow-md flex flex-col gap-space-lg">
+                    <div>
+                        <h2 class="font-title-lg text-title-lg text-primary flex items-center gap-2">
+                            <span class="material-symbols-outlined text-[20px] text-secondary">confirmation_number</span>
+                            Aforo, Disponibilidad y Tarifas
+                        </h2>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-space-md">
+                        <!-- Capacidad Total -->
+                        <div class="bg-surface-container-low p-space-md rounded-xl flex flex-col gap-space-xs">
+                            <label asp-for="Capacidad" class="font-label-md text-label-md text-on-surface font-semibold">Capacidad Total</label>
+                            <div class="flex items-center justify-between mt-space-xs">
+                                <button type="button" id="btn-cap-menos" class="w-9 h-9 rounded-xl bg-surface-container-lowest text-on-surface font-bold shadow-sm">-</button>
+                                <input asp-for="Capacidad" id="input-capacidad" type="number" min="1" max="10000"
+                                       class="w-20 text-center bg-transparent font-headline-sm text-headline-sm text-primary font-bold outline-none" />
+                                <button type="button" id="btn-cap-mas" class="w-9 h-9 rounded-xl bg-surface-container-lowest text-on-surface font-bold shadow-sm">+</button>
+                            </div>
+                            <span asp-validation-for="Capacidad" class="text-error font-label-sm"></span>
+                        </div>
+
+                        <!-- Disponibilidad Inicial -->
+                        <div class="bg-surface-container-low p-space-md rounded-xl flex flex-col gap-space-xs">
+                            <label asp-for="CuposDisponibles" class="font-label-md text-label-md text-on-surface font-semibold">Cupos Disponibles</label>
+                            <input asp-for="CuposDisponibles" id="input-disponibles" type="number" min="0"
+                                   class="mt-space-xs w-full text-center py-1.5 bg-surface-container-lowest rounded-xl font-headline-sm text-headline-sm text-primary font-bold outline-none" />
+                            <span asp-validation-for="CuposDisponibles" class="text-error font-label-sm"></span>
+                        </div>
+
+                        <!-- Precio Unitario -->
+                        <div class="bg-surface-container-low p-space-md rounded-xl flex flex-col gap-space-xs" id="contenedor-precio">
+                            <label asp-for="Precio" class="font-label-md text-label-md text-on-surface font-semibold">Tarifa General ($)</label>
+                            <div class="flex items-center justify-between mt-space-xs">
+                                <button type="button" id="btn-precio-menos" class="w-9 h-9 rounded-xl bg-surface-container-lowest text-on-surface font-bold shadow-sm">-</button>
+                                <input asp-for="Precio" id="input-precio" type="number" min="0" step="1000"
+                                       class="w-24 text-center bg-transparent font-headline-sm text-headline-sm text-primary font-bold outline-none" />
+                                <button type="button" id="btn-precio-mas" class="w-9 h-9 rounded-xl bg-surface-container-lowest text-on-surface font-bold shadow-sm">+</button>
+                            </div>
+                            <span asp-validation-for="Precio" class="text-error font-label-sm"></span>
+                        </div>
+                    </div>
+
+                    <label class="flex items-center gap-space-sm p-space-md bg-surface-container-low rounded-xl cursor-pointer hover:bg-surface-container transition-colors">
+                        <input id="check-gratuito" type="checkbox" class="w-5 h-5 rounded-md accent-primary" />
+                        <div class="flex flex-col">
+                            <span class="font-label-lg text-label-lg text-on-surface">Evento Gratuito (Valor $0)</span>
+                            <span class="font-body-sm text-body-sm text-on-surface-variant">Los asistentes podrán reservar cupo sin costo.</span>
+                        </div>
+                    </label>
+                </section>
+
+                <!-- 6. Imagen, Enlace Externo y Contacto (RF-46, RF-47) -->
+                <section class="bg-surface-container-lowest p-space-xl rounded-xl shadow-md flex flex-col gap-space-md">
+                    <h2 class="font-title-lg text-title-lg text-primary flex items-center gap-2">
+                        <span class="material-symbols-outlined text-[20px] text-secondary">link</span>
+                        Multimedia, Contacto y Enlace Externo
+                    </h2>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-space-md">
+                        <div class="flex flex-col gap-space-xs">
+                            <label asp-for="EnlaceExterno" class="font-label-md text-label-md text-on-surface font-semibold">Enlace externo de pago / reserva (Opcional)</label>
+                            <input asp-for="EnlaceExterno" type="url"
+                                   class="px-space-md py-space-sm bg-surface-container-low rounded-xl text-on-surface font-body-md text-body-md outline-none"
+                                   placeholder="https://tu-taquilla-externa.com/evento" />
+                            <span asp-validation-for="EnlaceExterno" class="text-error font-label-sm"></span>
+                        </div>
+
+                        <div class="flex flex-col gap-space-xs">
+                            <label asp-for="ContactoEvento" class="font-label-md text-label-md text-on-surface font-semibold">Contacto del Organizador (Correo o Teléfono)</label>
+                            <input asp-for="ContactoEvento"
+                                   class="px-space-md py-space-sm bg-surface-container-low rounded-xl text-on-surface font-body-md text-body-md outline-none"
+                                   placeholder="contacto@colectivo.com / +57 300 000 0000" />
+                            <span asp-validation-for="ContactoEvento" class="text-error font-label-sm"></span>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col gap-space-xs">
+                        <label asp-for="ImagenUrl" class="font-label-md text-label-md text-on-surface font-semibold">URL de la Imagen de Portada</label>
+                        <input asp-for="ImagenUrl" id="input-imagen-url" type="url"
+                               class="px-space-md py-space-sm bg-surface-container-low rounded-xl text-on-surface font-body-md text-body-md outline-none"
+                               placeholder="https://..." />
+                        <span asp-validation-for="ImagenUrl" class="text-error font-label-sm"></span>
+                    </div>
+                </section>
+
+                <!-- Botones de Envío -->
+                <div class="flex items-center justify-end gap-space-md">
+                    <a asp-controller="Organizador" asp-action="Panel"
+                       class="px-space-lg py-space-md rounded-xl font-label-lg text-label-lg text-on-surface hover:bg-surface-container transition-colors">
+                        Cancelar
+                    </a>
+                    <button type="submit"
+                            class="px-space-xl py-space-md rounded-xl bg-primary hover:bg-primary-container text-on-primary font-label-lg text-label-lg tracking-wider uppercase flex items-center gap-2 shadow-lg">
+                        <span class="material-symbols-outlined text-[18px]">publish</span>
+                        <span>@(esEdicion ? "Guardar Cambios" : "Publicar Evento en NEXO")</span>
+                    </button>
+                </div>
+            </form>
+
+            <!-- COLUMNA DERECHA: Vista Previa en Vivo (Sticky) -->
+            <aside class="lg:col-span-4 w-full sticky top-24 flex flex-col gap-space-lg">
+                <div class="flex items-center justify-between bg-surface-container-highest px-space-md py-space-xs rounded-xl shadow-sm">
+                    <div class="flex items-center gap-space-xs">
+                        <span class="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span>
+                        <span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface font-bold">Cartelera en Vivo</span>
+                    </div>
+                    <span class="font-label-sm text-label-sm text-on-surface-variant">Vista Previa</span>
+                </div>
+
+                <div class="bg-surface-container-lowest rounded-2xl shadow-xl overflow-hidden flex flex-col">
+                    <div class="relative w-full aspect-[16/10] overflow-hidden bg-surface-container">
+                        <img id="vista-previa-imagen" class="w-full h-full object-cover" alt="Vista previa"
+                             src="@(string.IsNullOrEmpty(Model?.ImagenUrl) ? "/img/evento-default.jpg" : Model.ImagenUrl)" />
+                        <div class="absolute top-3 left-3">
+                            <span id="vista-previa-categoria" class="bg-surface-container-lowest/90 text-primary font-label-sm text-label-sm px-2.5 py-1 rounded-full font-bold tracking-wide uppercase shadow-sm">
+                                @(Model?.Categoria ?? "Cultural")
+                            </span>
+                        </div>
+                        <div class="absolute bottom-3 right-3 bg-primary/95 text-on-primary px-space-sm py-1 rounded-lg backdrop-blur-sm shadow-md flex items-baseline gap-1">
+                            <span class="font-title-lg text-title-lg font-bold" id="vista-previa-precio">
+                                @(Model?.Precio > 0 ? $"${Model.Precio:N0}" : "GRATUITO")
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="p-space-lg flex flex-col gap-space-sm">
+                        <div class="flex items-center gap-space-xs text-on-surface-variant font-label-md text-label-md">
+                            <span class="material-symbols-outlined text-[16px] text-secondary">calendar_month</span>
+                            <span id="vista-previa-fecha">Fecha por definir</span>
+                            <span class="text-outline-variant">•</span>
+                            <span id="vista-previa-hora">19:30</span>
+                        </div>
+
+                        <h3 class="font-headline-sm text-headline-sm text-primary leading-snug" id="vista-previa-titulo">
+                            @(string.IsNullOrEmpty(Model?.Nombre) ? "Título de la Experiencia" : Model.Nombre)
+                        </h3>
+
+                        <div class="flex items-center gap-space-xs text-on-surface-variant font-body-sm text-body-sm pt-space-xs">
+                            <span class="material-symbols-outlined text-[16px] text-outline">location_on</span>
+                            <span class="truncate" id="vista-previa-ubicacion">
+                                @(string.IsNullOrEmpty(Model?.Ubicacion) ? "Ubicación por definir" : Model.Ubicacion)
+                            </span>
+                        </div>
+
+                        <div class="mt-space-sm pt-space-sm bg-surface-container-low p-space-sm rounded-xl flex justify-between items-center font-label-sm text-label-sm text-on-surface-variant">
+                            <span>Disponibilidad:</span>
+                            <span class="font-bold text-on-surface"><span id="vista-previa-cupos">@(Model?.CuposDisponibles ?? 50)</span> cupos habilitados</span>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/crear-evento.js" asp-append-version="true"></script>
+}

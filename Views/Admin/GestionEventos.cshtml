@@ -1,0 +1,199 @@
+@model NexoWeb.Models.ViewModels.AdminGestionEventosViewModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Catálogo Global y Moderación";
+}
+
+<div class="flex flex-col w-full">
+    <!-- Encabezado -->
+    <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-space-lg mb-space-xl">
+        <div class="max-w-3xl">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm uppercase tracking-widest font-bold mb-space-sm">
+                <span class="material-symbols-outlined text-[14px]">verified_user</span>
+                Consola de Moderación Central
+            </div>
+            <h1 class="font-headline-lg text-headline-lg text-primary tracking-tight mb-2">
+                Catálogo Global y Moderación de Eventos
+            </h1>
+            <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
+                Supervisa, filtra y audita todas las experiencias culturales sometidas y publicadas en NEXO.
+            </p>
+        </div>
+    </div>
+
+    <!-- Barra de Filtros Interactiva -->
+    <div class="p-space-md rounded-2xl bg-surface-container-lowest shadow-sm mb-space-lg flex flex-col gap-space-md">
+        <div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-space-sm">
+            <div class="relative flex-1">
+                <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+                <input id="buscador-admin-eventos" type="text"
+                       class="w-full h-12 pl-11 pr-4 rounded-xl bg-surface-container-low text-on-surface placeholder:text-on-surface-variant font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-primary"
+                       placeholder="Buscar por ID (#EV-XX), título del evento, organizador o recinto..." />
+            </div>
+
+            <div class="flex flex-wrap items-center gap-space-sm">
+                <select id="filtro-categoria-admin" class="h-12 pl-4 pr-8 rounded-xl bg-surface-container-low text-on-surface font-title-md text-body-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary cursor-pointer">
+                    <option value="">Todas las Categorías</option>
+                    <option value="Conciertos">Conciertos</option>
+                    <option value="Tecnología">Tecnología</option>
+                    <option value="Deportivo">Deportivo</option>
+                    <option value="Gastronómico">Gastronómico</option>
+                    <option value="Educativo">Educativo</option>
+                    <option value="Cultural">Cultural</option>
+                    <option value="Entretenimiento">Entretenimiento</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Tabs de Estado -->
+        <div class="flex flex-wrap items-center justify-between gap-space-sm pt-space-xs">
+            <div class="flex flex-wrap items-center gap-1.5 p-1 rounded-xl bg-surface-container-low">
+                <button type="button" data-estado="todos" class="tab-estado-admin px-4 py-2 rounded-lg font-title-md text-body-sm font-semibold bg-primary text-on-primary shadow-sm">
+                    Todos (@(Model?.Eventos.Count ?? 0))
+                </button>
+                <button type="button" data-estado="pendiente" class="tab-estado-admin px-4 py-2 rounded-lg font-title-md text-body-sm font-semibold text-on-surface-variant hover:text-on-surface">
+                    Pendientes (@Model?.Eventos.Count(e => e.Estado == "Pendiente"))
+                </button>
+                <button type="button" data-estado="publicado" class="tab-estado-admin px-4 py-2 rounded-lg font-title-md text-body-sm font-semibold text-on-surface-variant hover:text-on-surface">
+                    Publicados (@Model?.Eventos.Count(e => e.Estado == "Publicado"))
+                </button>
+                <button type="button" data-estado="oculto" class="tab-estado-admin px-4 py-2 rounded-lg font-title-md text-body-sm font-semibold text-on-surface-variant hover:text-on-surface">
+                    Ocultos / Rechazados (@Model?.Eventos.Count(e => e.Estado == "Oculto" || e.Estado == "Rechazado"))
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Listado de Eventos -->
+    <div class="flex flex-col gap-space-md mb-space-xl" id="lista-eventos-admin">
+        @if (Model?.Eventos == null || !Model.Eventos.Any())
+        {
+            <div class="p-space-xl rounded-2xl bg-surface-container-lowest text-center shadow-sm">
+                <p class="font-headline-sm text-headline-sm text-primary">No hay eventos registrados en el sistema</p>
+            </div>
+        }
+        else
+        {
+            @foreach (var ev in Model.Eventos)
+            {
+                int porcentaje = ev.Capacidad > 0 ? (int)Math.Round((double)ev.CuposReservados * 100 / ev.Capacidad) : 0;
+                string estadoFiltro = (ev.Estado == "Oculto" || ev.Estado == "Rechazado") ? "oculto" : ev.Estado.ToLower();
+
+                <div class="tarjeta-evento-admin relative p-space-lg rounded-2xl bg-surface-container-lowest shadow-sm hover:shadow-md transition-shadow"
+                     data-estado="@estadoFiltro" data-categoria="@ev.Categoria">
+                    <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-space-lg">
+                        <!-- Izquierda: Imagen + Metadatos -->
+                        <div class="flex items-start gap-space-md">
+                            <div class="relative w-28 h-28 rounded-xl overflow-hidden bg-surface-container flex-shrink-0 shadow-inner">
+                                <img class="w-full h-full object-cover" alt="@ev.Nombre"
+                                     src="@(string.IsNullOrEmpty(ev.ImagenUrl) ? "/img/evento-default.jpg" : ev.ImagenUrl)" />
+                                <div class="absolute bottom-1.5 left-1.5 px-2 py-0.5 rounded bg-black/70 backdrop-blur-md text-white font-label-sm text-label-sm uppercase tracking-wider font-semibold">
+                                    #EV-@ev.Id
+                                </div>
+                            </div>
+
+                            <div class="flex flex-col gap-1 min-w-0">
+                                <div class="flex flex-wrap items-center gap-2 mb-0.5">
+                                    <span class="px-2.5 py-0.5 rounded-full font-label-sm text-label-sm font-bold bg-surface-container-high text-primary uppercase tracking-wider">
+                                        @ev.Categoria
+                                    </span>
+
+                                    @if (ev.Estado == "Pendiente")
+                                    {
+                                        <span class="px-2.5 py-0.5 rounded-full font-label-sm text-label-sm font-bold bg-secondary-fixed text-on-secondary-fixed flex items-center gap-1">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+                                            Pendiente de Revisión
+                                        </span>
+                                    }
+                                    else if (ev.Estado == "Publicado")
+                                    {
+                                        <span class="px-2.5 py-0.5 rounded-full font-label-sm text-label-sm font-bold bg-emerald-50 text-emerald-800 flex items-center gap-1">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                                            Publicado
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="px-2.5 py-0.5 rounded-full font-label-sm text-label-sm font-bold bg-error-container text-on-error-container">
+                                            @ev.Estado
+                                        </span>
+                                    }
+                                </div>
+
+                                <h3 class="font-headline-sm text-headline-sm text-primary font-medium leading-snug">
+                                    @ev.Nombre
+                                </h3>
+
+                                <div class="flex flex-wrap items-center gap-y-1 gap-x-space-md text-on-surface-variant font-body-sm text-body-sm mt-1">
+                                    <span class="flex items-center gap-1 text-on-surface font-medium">
+                                        <span class="material-symbols-outlined text-[16px]">person_pin</span>
+                                        Organizador: @ev.NombreOrganizador
+                                    </span>
+                                    <span class="flex items-center gap-1">
+                                        <span class="material-symbols-outlined text-[16px]">schedule</span>
+                                        @ev.Fecha.ToString("dd MMM yyyy") • @ev.Hora.ToString(@"hh\:mm")
+                                    </span>
+                                    <span class="flex items-center gap-1">
+                                        <span class="material-symbols-outlined text-[16px]">location_on</span>
+                                        @ev.Ubicacion
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Centro: Barra de Cupos -->
+                        <div class="flex flex-col gap-1.5 xl:w-56 flex-shrink-0 bg-surface-container-low p-space-sm rounded-xl">
+                            <div class="flex items-center justify-between font-label-sm text-label-sm">
+                                <span class="text-on-surface-variant font-semibold">Ocupación</span>
+                                <span class="text-primary font-bold">@ev.CuposReservados / @ev.Capacidad pases</span>
+                            </div>
+                            <div class="w-full bg-surface-container-highest h-2 rounded-full overflow-hidden">
+                                <div class="bg-primary h-full rounded-full" style="width: @porcentaje%;"></div>
+                            </div>
+                            <p class="font-label-sm text-label-sm text-on-surface-variant text-right">@porcentaje% ocupado</p>
+                        </div>
+
+                        <!-- Derecha: Botones de Moderación (RF-58, RF-59, RF-60, RF-61) -->
+                        <div class="flex items-center gap-space-sm flex-shrink-0 flex-wrap">
+                            <a asp-controller="Admin" asp-action="RevisionEvento" asp-route-id="@ev.Id"
+                               class="px-4 py-2.5 rounded-xl bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-title-md text-body-sm font-semibold transition-colors flex items-center gap-1.5">
+                                <span class="material-symbols-outlined text-[18px]">checklist</span>
+                                Revisar
+                            </a>
+
+                            @if (ev.Estado != "Publicado")
+                            {
+                                <form asp-controller="Admin" asp-action="CambiarEstadoEvento" method="post" class="inline">
+                                    <input type="hidden" name="eventoId" value="@ev.Id" />
+                                    <input type="hidden" name="nuevoEstado" value="Publicado" />
+                                    <button type="submit"
+                                            class="px-4 py-2.5 rounded-xl bg-primary text-on-primary hover:bg-primary-container font-title-md text-body-sm font-semibold transition-all shadow-sm flex items-center gap-1.5">
+                                        <span class="material-symbols-outlined text-[18px]">verified</span>
+                                        Aprobar
+                                    </button>
+                                </form>
+                            }
+
+                            @if (ev.Estado == "Publicado")
+                            {
+                                <form asp-controller="Admin" asp-action="CambiarEstadoEvento" method="post" class="inline">
+                                    <input type="hidden" name="eventoId" value="@ev.Id" />
+                                    <input type="hidden" name="nuevoEstado" value="Oculto" />
+                                    <button type="submit"
+                                            class="px-4 py-2.5 rounded-xl bg-error-container text-on-error-container hover:opacity-90 font-title-md text-body-sm font-semibold transition-all flex items-center gap-1.5">
+                                        <span class="material-symbols-outlined text-[18px]">visibility_off</span>
+                                        Ocultar
+                                    </button>
+                                </form>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/admin-eventos.js" asp-append-version="true"></script>
+}

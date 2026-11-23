@@ -1,0 +1,274 @@
+@model NexoWeb.Models.ViewModels.PanelAdminViewModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Consola Central";
+}
+
+<div class="flex flex-col w-full">
+    <!-- Encabezado -->
+    <div class="flex flex-col xl:flex-row xl:items-end justify-between gap-space-lg pb-space-lg">
+        <div class="flex flex-col gap-space-xs">
+            <div class="flex items-center gap-space-sm">
+                <span class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant font-bold">Consola Central NEXO</span>
+                <span class="w-1.5 h-1.5 rounded-full bg-outline-variant"></span>
+                <span class="font-label-sm text-label-sm uppercase tracking-wider text-secondary font-semibold">Nodo Central de Gobernanza</span>
+            </div>
+            <h1 class="font-headline-lg text-headline-lg text-primary tracking-tight">Supervisión &amp; Telemetría Cultural</h1>
+            <p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">
+                Matriz de control operacional, moderación de cartelera, supervisión de cuentas y trazabilidad de reservas en la plataforma.
+            </p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-space-md">
+            <a asp-controller="Admin" asp-action="GestionEventos"
+               class="px-space-lg py-2.5 rounded-xl bg-primary text-on-primary font-label-md text-label-md uppercase tracking-wider font-bold hover:bg-neutral-800 transition-colors shadow-sm flex items-center gap-2">
+                <span class="material-symbols-outlined text-[18px]">verified</span>
+                <span>Ir a Moderación (@Model?.EventosPendientesCount)</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Métricas KPI Globales (4 Columnas) -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-space-md mb-space-xl">
+        <!-- KPI 1: Moderación Pendiente -->
+        <div class="p-space-lg rounded-2xl bg-surface-container-lowest shadow-sm flex flex-col justify-between group hover:shadow-md transition-shadow">
+            <div class="flex items-start justify-between">
+                <div class="flex flex-col gap-1">
+                    <span class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant">Curaduría</span>
+                    <p class="font-title-md text-title-md text-on-surface">Por Aprobar</p>
+                </div>
+                <div class="w-10 h-10 rounded-xl bg-secondary-fixed text-secondary flex items-center justify-center">
+                    <span class="material-symbols-outlined text-[20px]">assignment_late</span>
+                </div>
+            </div>
+            <div class="mt-space-lg">
+                <div class="flex items-baseline gap-space-sm">
+                    <span class="font-headline-lg text-headline-lg text-primary tracking-tight">@Model?.EventosPendientesCount</span>
+                    <span class="font-body-md text-body-md text-on-surface-variant">eventos</span>
+                </div>
+                <div class="mt-space-sm flex items-center gap-2">
+                    <span class="px-2 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm font-semibold">Requieren revisión</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- KPI 2: Eventos Publicados -->
+        <div class="p-space-lg rounded-2xl bg-surface-container-lowest shadow-sm flex flex-col justify-between group hover:shadow-md transition-shadow">
+            <div class="flex items-start justify-between">
+                <div class="flex flex-col gap-1">
+                    <span class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant">Cartelera</span>
+                    <p class="font-title-md text-title-md text-on-surface">Eventos Activos</p>
+                </div>
+                <div class="w-10 h-10 rounded-xl bg-surface-container text-primary flex items-center justify-center">
+                    <span class="material-symbols-outlined text-[20px]">event_available</span>
+                </div>
+            </div>
+            <div class="mt-space-lg">
+                <div class="flex items-baseline gap-space-sm">
+                    <span class="font-headline-lg text-headline-lg text-primary tracking-tight">@Model?.EventosPublicadosCount</span>
+                    <span class="font-body-md text-body-md text-on-surface-variant">publicados</span>
+                </div>
+                <div class="mt-space-sm">
+                    <span class="font-label-sm text-label-sm text-on-surface-variant">De @Model?.TotalEventosCount registrados en total</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- KPI 3: Comunidad Activa -->
+        <div class="p-space-lg rounded-2xl bg-surface-container-lowest shadow-sm flex flex-col justify-between group hover:shadow-md transition-shadow">
+            <div class="flex items-start justify-between">
+                <div class="flex flex-col gap-1">
+                    <span class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant">Ecosistema</span>
+                    <p class="font-title-md text-title-md text-on-surface">Usuarios Registrados</p>
+                </div>
+                <div class="w-10 h-10 rounded-xl bg-surface-container text-primary flex items-center justify-center">
+                    <span class="material-symbols-outlined text-[20px]">groups</span>
+                </div>
+            </div>
+            <div class="mt-space-lg">
+                <div class="flex items-baseline gap-space-sm">
+                    <span class="font-headline-lg text-headline-lg text-primary tracking-tight">@Model?.TotalUsuariosCount</span>
+                    <span class="font-body-md text-body-md text-on-surface-variant">cuentas</span>
+                </div>
+                <div class="mt-space-sm flex items-center gap-space-xs text-on-surface-variant">
+                    <span class="font-label-sm text-label-sm font-semibold text-secondary">@Model?.OrganizadoresCount organizadores</span>
+                    <span class="font-label-sm text-label-sm">activos</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- KPI 4: Volumen Taquilla -->
+        <div class="p-space-lg rounded-2xl bg-surface-container-lowest shadow-sm flex flex-col justify-between group hover:shadow-md transition-shadow">
+            <div class="flex items-start justify-between">
+                <div class="flex flex-col gap-1">
+                    <span class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant">Transacciones</span>
+                    <p class="font-title-md text-title-md text-on-surface">Reservas Globales</p>
+                </div>
+                <div class="w-10 h-10 rounded-xl bg-surface-container text-primary flex items-center justify-center">
+                    <span class="material-symbols-outlined text-[20px]">payments</span>
+                </div>
+            </div>
+            <div class="mt-space-lg">
+                <div class="flex items-baseline gap-space-sm">
+                    <span class="font-headline-lg text-headline-lg text-primary tracking-tight">@Model?.TotalReservasCount</span>
+                    <span class="font-body-md text-body-md text-on-surface-variant">reservas</span>
+                </div>
+                <div class="mt-space-sm flex items-center gap-1.5 text-secondary">
+                    <span class="font-label-sm text-label-sm font-bold">Volumen: $@Model?.VolumenTotalTaquilla.ToString("N0")</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Grid Principal: Cola de Aprobación + Accesos Directos -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter-desktop items-start">
+        <!-- Columna Izquierda (8 cols) -->
+        <div class="lg:col-span-8 flex flex-col gap-space-xl">
+            <div class="flex flex-col gap-space-md">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-space-sm">
+                        <span class="w-3 h-3 rounded-full bg-secondary"></span>
+                        <h2 class="font-headline-sm text-headline-sm text-primary tracking-tight">Cola Prioritaria de Curaduría</h2>
+                    </div>
+                    <a asp-controller="Admin" asp-action="GestionEventos" class="font-label-md text-label-md text-secondary uppercase tracking-wider hover:underline">
+                        Ver Catálogo Completo →
+                    </a>
+                </div>
+
+                <div class="rounded-2xl bg-surface-container-lowest p-space-lg shadow-sm flex flex-col gap-space-md">
+                    @if (Model?.EventosPendientes == null || !Model.EventosPendientes.Any())
+                    {
+                        <div class="py-space-lg text-center flex flex-col items-center gap-space-xs">
+                            <span class="material-symbols-outlined text-[36px] text-emerald-700">task_alt</span>
+                            <p class="font-title-md text-title-md text-primary">No hay eventos pendientes de aprobación</p>
+                            <p class="font-body-sm text-body-sm text-on-surface-variant">Toda la cartelera propuesta ha sido revisada.</p>
+                        </div>
+                    }
+                    else
+                    {
+                        @foreach (var ev in Model.EventosPendientes)
+                        {
+                            <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-space-md p-space-md rounded-xl bg-surface-container-low hover:bg-surface-container transition-colors">
+                                <div class="flex items-center gap-space-md min-w-0">
+                                    <img class="w-20 h-16 rounded-xl object-cover flex-shrink-0 shadow-sm bg-surface-container"
+                                         src="@(string.IsNullOrEmpty(ev.ImagenUrl) ? "/img/evento-default.jpg" : ev.ImagenUrl)" alt="@ev.Nombre" />
+                                    <div class="flex flex-col min-w-0">
+                                        <div class="flex items-center gap-space-xs mb-1">
+                                            <span class="px-2 py-0.5 rounded bg-surface-container-highest text-primary font-label-sm text-label-sm font-semibold uppercase">@ev.Categoria</span>
+                                            <span class="font-label-sm text-label-sm text-secondary font-bold">Pendiente</span>
+                                        </div>
+                                        <h4 class="font-title-md text-title-md text-primary truncate">@ev.Nombre</h4>
+                                        <p class="font-body-sm text-body-sm text-on-surface-variant truncate">
+                                            @ev.Ubicacion • @ev.Capacidad localidades • Org: @ev.NombreOrganizador
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center gap-space-sm self-end md:self-center flex-shrink-0">
+                                    <a asp-controller="Admin" asp-action="RevisionEvento" asp-route-id="@ev.Id"
+                                       class="w-9 h-9 rounded-xl bg-surface-container-lowest text-on-surface hover:bg-surface-variant flex items-center justify-center shadow-sm transition-all"
+                                       title="Inspeccionar Expediente">
+                                        <span class="material-symbols-outlined text-[18px]">visibility</span>
+                                    </a>
+
+                                    <form asp-controller="Admin" asp-action="CambiarEstadoEvento" method="post" class="inline">
+                                        <input type="hidden" name="eventoId" value="@ev.Id" />
+                                        <input type="hidden" name="nuevoEstado" value="Rechazado" />
+                                        <button type="submit" class="w-9 h-9 rounded-xl bg-surface-container-lowest text-error hover:bg-error-container hover:text-on-error-container flex items-center justify-center shadow-sm transition-all" title="Rechazar">
+                                            <span class="material-symbols-outlined text-[18px]">close</span>
+                                        </button>
+                                    </form>
+
+                                    <form asp-controller="Admin" asp-action="CambiarEstadoEvento" method="post" class="inline">
+                                        <input type="hidden" name="eventoId" value="@ev.Id" />
+                                        <input type="hidden" name="nuevoEstado" value="Publicado" />
+                                        <button type="submit" class="w-9 h-9 rounded-xl bg-primary text-on-primary hover:bg-neutral-800 flex items-center justify-center shadow-sm transition-all" title="Aprobar y Publicar">
+                                            <span class="material-symbols-outlined text-[18px]">check</span>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+
+            <!-- Accesos Directos -->
+            <div class="flex flex-col gap-space-md">
+                <h3 class="font-title-lg text-title-lg text-primary">Accesos Directos a Módulos</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-space-md">
+                    <a asp-controller="Admin" asp-action="GestionEventos" class="p-space-lg rounded-2xl bg-surface-container-lowest shadow-sm hover:shadow-md transition-all group flex flex-col justify-between h-36">
+                        <div class="flex items-start justify-between">
+                            <div class="w-10 h-10 rounded-xl bg-surface-container flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors">
+                                <span class="material-symbols-outlined text-[22px]">event_note</span>
+                            </div>
+                            <span class="material-symbols-outlined text-outline group-hover:translate-x-1 transition-all">arrow_forward</span>
+                        </div>
+                        <div>
+                            <h4 class="font-title-md text-title-md text-primary">Gestión de Eventos</h4>
+                            <p class="font-body-sm text-body-sm text-on-surface-variant">Aprobar, rechazar u ocultar eventos.</p>
+                        </div>
+                    </a>
+
+                    <a asp-controller="Admin" asp-action="GestionUsuarios" class="p-space-lg rounded-2xl bg-surface-container-lowest shadow-sm hover:shadow-md transition-all group flex flex-col justify-between h-36">
+                        <div class="flex items-start justify-between">
+                            <div class="w-10 h-10 rounded-xl bg-surface-container flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors">
+                                <span class="material-symbols-outlined text-[22px]">badge</span>
+                            </div>
+                            <span class="material-symbols-outlined text-outline group-hover:translate-x-1 transition-all">arrow_forward</span>
+                        </div>
+                        <div>
+                            <h4 class="font-title-md text-title-md text-primary">Directorio Cuentas</h4>
+                            <p class="font-body-sm text-body-sm text-on-surface-variant">Control de roles y activación.</p>
+                        </div>
+                    </a>
+
+                    <a asp-controller="Admin" asp-action="GestionReservas" class="p-space-lg rounded-2xl bg-surface-container-lowest shadow-sm hover:shadow-md transition-all group flex flex-col justify-between h-36">
+                        <div class="flex items-start justify-between">
+                            <div class="w-10 h-10 rounded-xl bg-surface-container flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors">
+                                <span class="material-symbols-outlined text-[22px]">confirmation_number</span>
+                            </div>
+                            <span class="material-symbols-outlined text-outline group-hover:translate-x-1 transition-all">arrow_forward</span>
+                        </div>
+                        <div>
+                            <h4 class="font-title-md text-title-md text-primary">Reservas Globales</h4>
+                            <p class="font-body-sm text-body-sm text-on-surface-variant">Historial y cancelaciones.</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Columna Derecha (4 cols): Bitácora Global -->
+        <div class="lg:col-span-4 flex flex-col gap-space-lg">
+            <div class="rounded-2xl bg-surface-container-lowest p-space-lg shadow-sm flex flex-col">
+                <div class="flex items-center justify-between pb-space-md mb-space-md">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+                            <span class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant font-bold">Bitácora Global</span>
+                        </div>
+                        <h3 class="font-title-lg text-title-lg text-primary mt-1">Actividad Reciente</h3>
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-space-md relative">
+                    <div class="flex items-start gap-space-sm p-space-sm rounded-xl bg-surface-container-low">
+                        <span class="material-symbols-outlined text-secondary text-[18px] mt-0.5">verified</span>
+                        <div>
+                            <p class="font-label-sm text-label-sm font-bold text-primary">Sincronización de Catálogo</p>
+                            <p class="font-body-sm text-body-sm text-on-surface-variant">Todos los eventos aprobados están visibles en la cartelera pública.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-space-sm p-space-sm rounded-xl bg-surface-container-low">
+                        <span class="material-symbols-outlined text-primary text-[18px] mt-0.5">security</span>
+                        <div>
+                            <p class="font-label-sm text-label-sm font-bold text-primary">Control de Roles Activo</p>
+                            <p class="font-body-sm text-body-sm text-on-surface-variant">Segregación estricta entre Usuario, Organizador y Administrador.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

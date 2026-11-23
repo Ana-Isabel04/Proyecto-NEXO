@@ -1,0 +1,269 @@
+@model NexoWeb.Models.ViewModels.AdminGestionUsuariosViewModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Directorio de Cuentas y Entidades";
+}
+
+<div class="flex flex-col w-full">
+    <!-- Encabezado y Acción de Crear Cuenta Admin -->
+    <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-space-lg mb-space-xl">
+        <div class="flex flex-col gap-space-xs max-w-3xl">
+            <div class="flex items-center gap-space-sm mb-1">
+                <span class="font-label-sm text-label-sm uppercase tracking-widest text-secondary font-semibold bg-surface-container px-2.5 py-1 rounded">Módulo SINC 08</span>
+                <span class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant font-semibold">Gobernanza Centralizada</span>
+            </div>
+            <h1 class="font-headline-lg text-headline-lg text-primary tracking-tight">Directorio de Cuentas y Entidades</h1>
+            <p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">
+                Administración de roles, control de acceso y activación de cuentas de Usuarios, Organizadores y Administradores.
+            </p>
+        </div>
+
+        <div class="flex items-center gap-space-sm flex-shrink-0">
+            <button type="button" id="btn-abrir-modal-admin"
+                    class="flex items-center gap-space-sm px-6 py-3 rounded-xl bg-primary text-on-primary font-title-md text-title-md tracking-wide shadow-md hover:bg-primary-container transition-all">
+                <span class="material-symbols-outlined text-[18px]">admin_panel_settings</span>
+                <span>Crear Cuenta Admin</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Métricas Rápidas (4 Columnas) -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-md mb-space-xl">
+        <div class="p-space-lg rounded-2xl bg-surface-container-lowest shadow-sm flex flex-col justify-between">
+            <div class="flex items-center justify-between text-on-surface-variant mb-space-sm">
+                <span class="font-label-sm text-label-sm uppercase tracking-wider">Total Cuentas</span>
+                <span class="material-symbols-outlined text-[18px]">group</span>
+            </div>
+            <div class="flex items-baseline gap-space-sm">
+                <span class="font-headline-md text-headline-md font-semibold text-primary">@(Model?.Usuarios.Count ?? 0)</span>
+                <span class="font-label-sm text-label-sm text-secondary font-semibold">registradas</span>
+            </div>
+        </div>
+
+        <div class="p-space-lg rounded-2xl bg-surface-container-lowest shadow-sm flex flex-col justify-between">
+            <div class="flex items-center justify-between text-on-surface-variant mb-space-sm">
+                <span class="font-label-sm text-label-sm uppercase tracking-wider">Organizadores</span>
+                <span class="material-symbols-outlined text-[18px]">corporate_fare</span>
+            </div>
+            <div class="flex items-baseline gap-space-sm">
+                <span class="font-headline-md text-headline-md font-semibold text-primary">@Model?.Usuarios.Count(u => u.Rol == "Organizador")</span>
+                <span class="font-label-sm text-label-sm text-on-surface-variant">gestores de cartelera</span>
+            </div>
+        </div>
+
+        <div class="p-space-lg rounded-2xl bg-surface-container-lowest shadow-sm flex flex-col justify-between">
+            <div class="flex items-center justify-between text-on-surface-variant mb-space-sm">
+                <span class="font-label-sm text-label-sm uppercase tracking-wider">Administradores</span>
+                <span class="material-symbols-outlined text-[18px] text-secondary">verified_user</span>
+            </div>
+            <div class="flex items-baseline gap-space-sm">
+                <span class="font-headline-md text-headline-md font-semibold text-secondary">@Model?.Usuarios.Count(u => u.Rol == "Administrador")</span>
+                <span class="font-label-sm text-label-sm text-on-surface-variant">nivel gobierno</span>
+            </div>
+        </div>
+
+        <div class="p-space-lg rounded-2xl bg-surface-container-lowest shadow-sm flex flex-col justify-between">
+            <div class="flex items-center justify-between text-on-surface-variant mb-space-sm">
+                <span class="font-label-sm text-label-sm uppercase tracking-wider">Cuentas Inactivas</span>
+                <span class="material-symbols-outlined text-[18px] text-error">block</span>
+            </div>
+            <div class="flex items-baseline gap-space-sm">
+                <span class="font-headline-md text-headline-md font-semibold text-error">@Model?.Usuarios.Count(u => !u.Activo)</span>
+                <span class="font-label-sm text-label-sm text-error font-semibold">acceso bloqueado</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Barra de Búsqueda y Filtros por Rol -->
+    <div class="flex flex-col gap-space-md p-space-lg rounded-2xl bg-surface-container-lowest shadow-sm mb-space-lg">
+        <div class="relative flex-1">
+            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">person_search</span>
+            <input id="buscador-usuarios-admin" type="text"
+                   class="w-full h-12 pl-12 pr-4 rounded-xl bg-surface-container-low text-on-surface placeholder:text-on-surface-variant font-body-sm text-body-sm focus:outline-none focus:ring-1 focus:ring-primary"
+                   placeholder="Buscar por nombre completo, correo electrónico o identificador..." />
+        </div>
+
+        <div class="flex items-center gap-2 overflow-x-auto pb-1">
+            <button type="button" data-filtro-rol="todos" class="tab-rol-admin px-4 py-2 rounded-xl bg-primary text-on-primary font-title-md text-body-sm whitespace-nowrap">
+                Todos (@(Model?.Usuarios.Count ?? 0))
+            </button>
+            <button type="button" data-filtro-rol="usuario" class="tab-rol-admin px-4 py-2 rounded-xl bg-surface-container-low text-on-surface hover:bg-surface-container font-title-md text-body-sm whitespace-nowrap">
+                Usuarios (@Model?.Usuarios.Count(u => u.Rol == "Usuario"))
+            </button>
+            <button type="button" data-filtro-rol="organizador" class="tab-rol-admin px-4 py-2 rounded-xl bg-surface-container-low text-on-surface hover:bg-surface-container font-title-md text-body-sm whitespace-nowrap">
+                Organizadores (@Model?.Usuarios.Count(u => u.Rol == "Organizador"))
+            </button>
+            <button type="button" data-filtro-rol="administrador" class="tab-rol-admin px-4 py-2 rounded-xl bg-secondary-fixed text-on-secondary-fixed font-title-md text-body-sm whitespace-nowrap">
+                Administradores (@Model?.Usuarios.Count(u => u.Rol == "Administrador"))
+            </button>
+            <button type="button" data-filtro-rol="inactivo" class="tab-rol-admin px-4 py-2 rounded-xl bg-error-container text-on-error-container font-title-md text-body-sm whitespace-nowrap">
+                Suspendidos (@Model?.Usuarios.Count(u => !u.Activo))
+            </button>
+        </div>
+    </div>
+
+    <!-- Listado de Cuentas -->
+    <div class="flex flex-col gap-space-md mb-space-xl" id="lista-usuarios-admin">
+        @if (Model?.Usuarios != null)
+        {
+            @foreach (var u in Model.Usuarios)
+            {
+                string iniciales = string.IsNullOrEmpty(u.NombreCompleto) ? "US" : u.NombreCompleto.Substring(0, Math.Min(2, u.NombreCompleto.Length)).ToUpper();
+                string filtroTag = !u.Activo ? "inactivo" : u.Rol.ToLower();
+
+                <div class="tarjeta-usuario-admin p-space-lg rounded-2xl bg-surface-container-lowest shadow-sm hover:shadow-md transition-all flex flex-col xl:flex-row xl:items-center justify-between gap-space-lg @(!u.Activo ? "opacity-75 bg-error-container/10" : "")"
+                     data-rol="@filtroTag">
+
+                    <!-- Identidad -->
+                    <div class="flex items-start gap-space-md min-w-0 xl:w-2/5">
+                        <div class="w-14 h-14 rounded-2xl flex-shrink-0 flex items-center justify-center font-headline-sm font-bold @(u.Rol == "Administrador" ? "bg-primary text-on-primary" : (u.Rol == "Organizador" ? "bg-secondary-fixed text-secondary" : "bg-surface-container text-primary"))">
+                            @iniciales
+                        </div>
+                        <div class="flex flex-col min-w-0">
+                            <div class="flex items-center gap-space-xs flex-wrap mb-1">
+                                <h2 class="font-headline-sm text-headline-sm text-primary font-semibold tracking-tight truncate">@u.NombreCompleto</h2>
+
+                                @if (u.Rol == "Administrador")
+                                {
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-primary text-on-primary font-label-sm text-label-sm font-semibold">
+                                        <span class="material-symbols-outlined text-[13px]">shield</span>
+                                        Administrador
+                                    </span>
+                                }
+                                else if (u.Rol == "Organizador")
+                                {
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm font-semibold">
+                                        <span class="material-symbols-outlined text-[13px]">verified</span>
+                                        Organizador
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant font-label-sm text-label-sm font-semibold">
+                                        Usuario
+                                    </span>
+                                }
+
+                                @if (!u.Activo)
+                                {
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm font-semibold">
+                                        Suspendido
+                                    </span>
+                                }
+                            </div>
+                            <p class="font-body-sm text-body-sm text-on-surface-variant font-medium">@u.Correo</p>
+                            <div class="flex items-center gap-space-sm mt-1 text-on-surface-variant font-label-sm text-label-sm">
+                                <span>ID: #USR-@u.Id</span>
+                                <span>•</span>
+                                <span>Registro: @u.FechaRegistro.ToString("dd MMM yyyy")</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Métricas de Actividad -->
+                    <div class="grid grid-cols-2 gap-space-md py-space-sm px-space-md rounded-xl bg-surface-container-low xl:w-1/4">
+                        <div class="flex flex-col">
+                            <span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Actividad</span>
+                            <span class="font-title-md text-title-md text-primary font-bold mt-0.5">
+                                @(u.Rol == "Organizador" ? $"{u.EventosCreadosCount} eventos" : $"{u.ReservasCount} reservas")
+                            </span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Estado</span>
+                            <span class="font-title-md text-title-md font-bold mt-0.5 @(u.Activo ? "text-emerald-700" : "text-error")">
+                                @(u.Activo ? "Activo" : "Inactivo")
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Acciones de Gestión de Rol y Estado (RF-63) -->
+                    <div class="flex items-center gap-space-sm justify-end xl:w-1/3 flex-shrink-0 flex-wrap">
+                        <!-- Selector Rápido de Rol -->
+                        <form asp-controller="Admin" asp-action="CambiarRolUsuario" method="post" class="flex items-center gap-1.5">
+                            <input type="hidden" name="usuarioId" value="@u.Id" />
+                            <select name="nuevoRol" class="h-10 px-3 rounded-xl bg-surface-container-low text-on-surface font-title-md text-body-sm cursor-pointer outline-none focus:ring-1 focus:ring-primary">
+                                <option value="Usuario" selected="@(u.Rol == "Usuario")">Rol: Usuario</option>
+                                <option value="Organizador" selected="@(u.Rol == "Organizador")">Rol: Organizador</option>
+                                <option value="Administrador" selected="@(u.Rol == "Administrador")">Rol: Administrador</option>
+                            </select>
+                            <button type="submit" class="h-10 px-3 rounded-xl bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-md text-label-md font-semibold transition-colors">
+                                Aplicar
+                            </button>
+                        </form>
+
+                        <!-- Botón Activar / Desactivar -->
+                        <form asp-controller="Admin" asp-action="AlternarEstadoUsuario" method="post">
+                            <input type="hidden" name="usuarioId" value="@u.Id" />
+                            @if (u.Activo)
+                            {
+                                <button type="submit" class="h-10 px-4 rounded-xl bg-error-container text-on-error-container hover:opacity-90 font-title-md text-body-sm font-semibold transition-colors">
+                                    Suspender
+                                </button>
+                            }
+                            else
+                            {
+                                <button type="submit" class="h-10 px-4 rounded-xl bg-primary text-on-primary hover:bg-neutral-800 font-title-md text-body-sm font-semibold transition-colors">
+                                    Reactivar
+                                </button>
+                            }
+                        </form>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+<!-- MODAL: Crear Nueva Cuenta de Administrador -->
+<div id="modal-crear-admin" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+    <div class="bg-surface-container-lowest rounded-2xl shadow-2xl max-w-lg w-full p-space-xl flex flex-col gap-space-lg">
+        <div class="flex items-start justify-between">
+            <div>
+                <span class="font-label-sm text-label-sm uppercase tracking-widest text-secondary font-bold">Gobernanza NEXO</span>
+                <h2 class="font-headline-sm text-headline-sm text-primary mt-1">Crear Cuenta de Administrador</h2>
+                <p class="font-body-sm text-body-sm text-on-surface-variant mt-1">
+                    Esta cuenta tendrá acceso total a moderación de cartelera, gestión de usuarios y supervisión de reservas.
+                </p>
+            </div>
+            <button type="button" id="btn-cerrar-modal-admin" class="p-1.5 rounded-lg hover:bg-surface-container text-on-surface-variant">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+
+        <form asp-controller="Admin" asp-action="CrearAdministrador" method="post" class="flex flex-col gap-space-md">
+            <div class="flex flex-col gap-space-xs">
+                <label class="font-label-md text-label-md text-on-surface font-semibold">Nombre Completo</label>
+                <input name="NombreCompleto" type="text" required
+                       class="h-11 px-space-md rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md outline-none focus:ring-1 focus:ring-primary"
+                       placeholder="Ej. Valeria Donoso" />
+            </div>
+
+            <div class="flex flex-col gap-space-xs">
+                <label class="font-label-md text-label-md text-on-surface font-semibold">Correo Institucional</label>
+                <input name="Correo" type="email" required
+                       class="h-11 px-space-md rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md outline-none focus:ring-1 focus:ring-primary"
+                       placeholder="admin@nexo.com" />
+            </div>
+
+            <div class="flex flex-col gap-space-xs">
+                <label class="font-label-md text-label-md text-on-surface font-semibold">Contraseña Inicial (mínimo 8 caracteres)</label>
+                <input name="Contrasena" type="password" minlength="8" required
+                       class="h-11 px-space-md rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md outline-none focus:ring-1 focus:ring-primary"
+                       placeholder="••••••••" />
+            </div>
+
+            <div class="flex items-center justify-end gap-space-sm pt-space-sm">
+                <button type="button" id="btn-cancelar-modal-admin" class="px-space-lg py-2.5 rounded-xl font-label-lg text-label-lg text-on-surface hover:bg-surface-container">
+                    Cancelar
+                </button>
+                <button type="submit" class="px-space-lg py-2.5 rounded-xl bg-primary text-on-primary font-label-lg text-label-lg uppercase tracking-wider shadow-md hover:bg-neutral-800">
+                    Registrar Administrador
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/admin-usuarios.js" asp-append-version="true"></script>
+}

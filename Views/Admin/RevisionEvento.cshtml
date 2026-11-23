@@ -1,0 +1,171 @@
+@model NexoWeb.Models.ViewModels.AdminRevisionEventoViewModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = $"Revisión de Evento #{Model?.Evento.Id}";
+}
+
+<div class="flex flex-col w-full">
+    <!-- Breadcrumb y Estado -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-space-md mb-space-xl">
+        <div class="flex flex-col gap-1.5">
+            <nav class="flex items-center gap-2 text-on-surface-variant font-label-md text-label-md tracking-wider">
+                <a asp-controller="Admin" asp-action="GestionEventos" class="hover:text-primary transition-colors">Catálogo Global</a>
+                <span class="text-outline-variant">/</span>
+                <span class="text-on-surface font-semibold">Expediente #EV-@Model?.Evento.Id</span>
+            </nav>
+            <div class="flex items-center gap-space-sm">
+                <h1 class="font-display text-headline-sm text-on-surface">Inspección de Obra &amp; Certificación</h1>
+                <span class="px-2.5 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm font-semibold tracking-wider uppercase">
+                    @Model?.Evento.Estado
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Estación de Inspección (2 Columnas) -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-start">
+
+        <!-- COLUMNA IZQUIERDA (7 cols): Ficha completa del evento -->
+        <div class="lg:col-span-7 flex flex-col gap-space-xl">
+            <section class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col gap-space-md">
+                <div class="flex items-start justify-between gap-space-md">
+                    <div class="flex flex-col gap-1">
+                        <span class="px-2 py-0.5 rounded bg-surface-container-high font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant font-semibold w-fit">
+                            @Model?.Evento.Categoria
+                        </span>
+                        <h2 class="font-display text-headline-md text-on-surface mt-1">@Model?.Evento.Nombre</h2>
+                        <div class="flex items-center gap-2 text-on-surface-variant font-body-sm text-body-sm">
+                            <span>Producido por</span>
+                            <span class="font-title-md text-body-md text-primary font-semibold">@Model?.NombreOrganizador</span>
+                            <span class="text-outline-variant">•</span>
+                            <span class="font-body-sm">@Model?.CorreoOrganizador</span>
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-end">
+                        <span class="font-label-sm text-label-sm uppercase text-on-surface-variant tracking-wider">Tarifa</span>
+                        <span class="font-display text-headline-sm text-primary">
+                            @(Model?.Evento.Precio == 0 ? "Gratuito" : $"${Model?.Evento.Precio:N0}")
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Imagen Portada -->
+                <div class="relative w-full aspect-video rounded-lg overflow-hidden bg-surface-container-high">
+                    <img class="w-full h-full object-cover" alt="@Model?.Evento.Nombre"
+                         src="@(string.IsNullOrEmpty(Model?.Evento.ImagenUrl) ? "/img/evento-default.jpg" : Model.Evento.ImagenUrl)" />
+                </div>
+
+                <!-- Ficha Técnica -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-space-sm pt-space-xs">
+                    <div class="p-space-sm rounded-lg bg-surface-container-low flex flex-col gap-0.5">
+                        <span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Fecha</span>
+                        <span class="font-title-md text-body-sm text-on-surface font-semibold">@Model?.Evento.Fecha.ToString("dd MMM yyyy")</span>
+                        <span class="font-body-sm text-body-sm text-on-surface-variant">@Model?.Evento.Hora.ToString(@"hh\:mm") hs</span>
+                    </div>
+                    <div class="p-space-sm rounded-lg bg-surface-container-low flex flex-col gap-0.5">
+                        <span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Recinto</span>
+                        <span class="font-title-md text-body-sm text-on-surface font-semibold truncate">@Model?.Evento.Ubicacion</span>
+                    </div>
+                    <div class="p-space-sm rounded-lg bg-surface-container-low flex flex-col gap-0.5">
+                        <span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Capacidad</span>
+                        <span class="font-title-md text-body-sm text-on-surface font-semibold">@Model?.Evento.Capacidad Plazas</span>
+                        <span class="font-body-sm text-body-sm text-secondary">@Model?.Evento.CuposDisponibles libres</span>
+                    </div>
+                    <div class="p-space-sm rounded-lg bg-surface-container-low flex flex-col gap-0.5">
+                        <span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Contacto</span>
+                        <span class="font-title-md text-body-sm text-on-surface font-semibold truncate">@(Model?.Evento.ContactoEvento ?? "No especificado")</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Descripción Completa -->
+            <section class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col gap-space-md">
+                <div class="flex items-center gap-space-sm">
+                    <span class="material-symbols-outlined text-on-surface-variant text-[20px]">auto_stories</span>
+                    <h3 class="font-title-lg text-title-lg text-on-surface">Descripción del Evento</h3>
+                </div>
+                <p class="font-body-md text-body-md text-on-surface leading-relaxed">
+                    @Model?.Evento.Descripcion
+                </p>
+                @if (!string.IsNullOrEmpty(Model?.Evento.EnlaceExterno))
+                {
+                    <div class="p-space-sm rounded-lg bg-surface-container-low flex items-center justify-between">
+                        <span class="font-label-md text-label-md text-on-surface-variant">Enlace externo declarado:</span>
+                        <a href="@Model.Evento.EnlaceExterno" target="_blank" class="font-body-sm text-secondary underline truncate max-w-xs">@Model.Evento.EnlaceExterno</a>
+                    </div>
+                }
+            </section>
+        </div>
+
+        <!-- COLUMNA DERECHA (5 cols): Resolución Administrativa -->
+        <div class="lg:col-span-5 flex flex-col gap-space-xl sticky top-24">
+            <!-- Checklist de Verificación -->
+            <section class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col gap-space-md">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-space-sm">
+                        <span class="material-symbols-outlined text-secondary text-[20px]">fact_check</span>
+                        <h3 class="font-title-lg text-title-lg text-on-surface">Chequeo Administrativo</h3>
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-space-sm">
+                    <div class="p-space-sm rounded-lg bg-surface-container-low flex items-center justify-between">
+                        <span class="font-title-md text-body-sm text-on-surface font-semibold">Datos obligatorios completos</span>
+                        <span class="px-2 py-0.5 rounded bg-surface-container-highest text-on-surface font-label-sm text-label-sm font-semibold uppercase">Verificado</span>
+                    </div>
+                    <div class="p-space-sm rounded-lg bg-surface-container-low flex items-center justify-between">
+                        <span class="font-title-md text-body-sm text-on-surface font-semibold">Coherencia de cupos y tarifa</span>
+                        <span class="px-2 py-0.5 rounded bg-surface-container-highest text-on-surface font-label-sm text-label-sm font-semibold uppercase">Conforme</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Caja de Resolución (RF-58, RF-59, RF-60, RF-61) -->
+            <section class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col gap-space-md">
+                <div class="flex items-center gap-space-sm">
+                    <span class="material-symbols-outlined text-primary text-[20px]">gavel</span>
+                    <h3 class="font-title-lg text-title-lg text-on-surface">Resolución Administrativa</h3>
+                </div>
+                <p class="font-body-sm text-body-sm text-on-surface-variant">
+                    Selecciona la acción de moderación para actualizar inmediatamente la visibilidad del evento en NEXO.
+                </p>
+
+                <div class="flex flex-col gap-space-sm pt-2">
+                    <!-- Aprobar y Publicar (RF-58) -->
+                    <form asp-controller="Admin" asp-action="CambiarEstadoEvento" method="post">
+                        <input type="hidden" name="eventoId" value="@Model?.Evento.Id" />
+                        <input type="hidden" name="nuevoEstado" value="Publicado" />
+                        <button type="submit"
+                                class="w-full h-12 bg-primary text-on-primary rounded-xl font-label-lg text-label-lg uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-neutral-800 transition-all shadow-md">
+                            <span class="material-symbols-outlined text-[18px]">check_circle</span>
+                            Aprobar y Publicar en Cartelera
+                        </button>
+                    </form>
+
+                    <!-- Ocultar Evento (RF-60) -->
+                    <form asp-controller="Admin" asp-action="CambiarEstadoEvento" method="post">
+                        <input type="hidden" name="eventoId" value="@Model?.Evento.Id" />
+                        <input type="hidden" name="nuevoEstado" value="Oculto" />
+                        <button type="submit"
+                                class="w-full h-11 bg-surface-container-high text-on-surface rounded-xl font-label-lg text-label-lg uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-surface-container-highest transition-all">
+                            <span class="material-symbols-outlined text-[18px]">visibility_off</span>
+                            Ocultar de la Vista Pública
+                        </button>
+                    </form>
+
+                    <!-- Rechazar / Eliminar (RF-59, RF-61) -->
+                    <form asp-controller="Admin" asp-action="CambiarEstadoEvento" method="post"
+                          onsubmit="return confirm('¿Confirmas el rechazo definitivo de este evento?');">
+                        <input type="hidden" name="eventoId" value="@Model?.Evento.Id" />
+                        <input type="hidden" name="nuevoEstado" value="Rechazado" />
+                        <button type="submit"
+                                class="w-full py-2 text-error font-label-md text-label-md uppercase tracking-wider flex items-center justify-center gap-1.5 hover:underline transition-all mt-1">
+                            <span class="material-symbols-outlined text-[16px]">block</span>
+                            Rechazar Expediente
+                        </button>
+                    </form>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
