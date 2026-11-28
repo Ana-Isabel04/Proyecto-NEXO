@@ -85,6 +85,10 @@ app.UseAuthorization();
 app.MapControllers();
 app.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
 
+// Cliente React del visitante (build de client/ en wwwroot/app). Las rutas del SPA caen en su index.html.
+app.MapGet("/app", () => Results.Redirect("/app/"));
+app.MapFallbackToFile("/app/{*path:nonfile}", "app/index.html");
+
 app.Run();
 
 static Task Redirect(RedirectContext<CookieAuthenticationOptions> ctx, int apiStatus)

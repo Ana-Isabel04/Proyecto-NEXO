@@ -5,6 +5,8 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nexo", "Nexo.csproj", "{459757CC-389A-49B2-B7E2-CBFDFA7DDA22}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nexo.Tests", "Nexo.Tests\Nexo.Tests.csproj", "{2D9A3267-42F6-49DD-926B-CE69204DA33D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,18 @@ Global
 		{459757CC-389A-49B2-B7E2-CBFDFA7DDA22}.Release|x64.Build.0 = Release|Any CPU
 		{459757CC-389A-49B2-B7E2-CBFDFA7DDA22}.Release|x86.ActiveCfg = Release|Any CPU
 		{459757CC-389A-49B2-B7E2-CBFDFA7DDA22}.Release|x86.Build.0 = Release|Any CPU
+		{2D9A3267-42F6-49DD-926B-CE69204DA33D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D9A3267-42F6-49DD-926B-CE69204DA33D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D9A3267-42F6-49DD-926B-CE69204DA33D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{2D9A3267-42F6-49DD-926B-CE69204DA33D}.Debug|x64.Build.0 = Debug|Any CPU
+		{2D9A3267-42F6-49DD-926B-CE69204DA33D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{2D9A3267-42F6-49DD-926B-CE69204DA33D}.Debug|x86.Build.0 = Debug|Any CPU
+		{2D9A3267-42F6-49DD-926B-CE69204DA33D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D9A3267-42F6-49DD-926B-CE69204DA33D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D9A3267-42F6-49DD-926B-CE69204DA33D}.Release|x64.ActiveCfg = Release|Any CPU
+		{2D9A3267-42F6-49DD-926B-CE69204DA33D}.Release|x64.Build.0 = Release|Any CPU
+		{2D9A3267-42F6-49DD-926B-CE69204DA33D}.Release|x86.ActiveCfg = Release|Any CPU
+		{2D9A3267-42F6-49DD-926B-CE69204DA33D}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

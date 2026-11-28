@@ -3,6 +3,8 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <!-- Pruebas, cliente React y código heredado viven en subcarpetas y no forman parte de este proyecto. -->
+    <DefaultItemExcludes>$(DefaultItemExcludes);Nexo.Tests/**;client/**;legacy/**</DefaultItemExcludes>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
