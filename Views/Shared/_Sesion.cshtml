@@ -1,0 +1,16 @@
+@if (User.Identity?.IsAuthenticated == true)
+{
+    <div class="flex items-center gap-space-sm">
+        <span class="hidden md:block font-body-sm text-body-sm text-on-surface font-semibold">@User.Identity.Name</span>
+        <form method="post" action="/Auth/Logout">
+            @Html.AntiForgeryToken()
+            <button type="submit" aria-label="Cerrar sesión" title="Cerrar sesión" class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container">
+                <span class="material-symbols-outlined text-[20px]">logout</span>
+            </button>
+        </form>
+    </div>
+}
+else
+{
+    <a href="/Auth/Login" class="px-space-md py-space-sm rounded-lg bg-primary text-on-primary font-label-lg text-label-lg">Iniciar sesión</a>
+}

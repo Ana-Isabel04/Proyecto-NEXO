@@ -1,0 +1,10 @@
+@model EstadoVacioViewModel
+<div class="flex flex-col items-center text-center gap-space-md bg-surface-container-lowest rounded-xl p-space-xl my-space-lg shadow-[0_1px_6px_rgba(26,26,26,0.03)]">
+    <span class="material-symbols-outlined text-[40px] text-on-surface-variant">@Model.Icono</span>
+    <h2 class="font-headline-sm text-headline-sm text-on-surface">@Model.Titulo</h2>
+    <p class="font-body-md text-body-md text-on-surface-variant max-w-md">@Model.Mensaje</p>
+    @if (Model.TextoAccion is not null && Model.UrlAccion is not null)
+    {
+        <a href="@Model.UrlAccion" class="px-space-md py-space-sm rounded-lg bg-primary text-on-primary font-label-lg text-label-lg">@Model.TextoAccion</a>
+    }
+</div>

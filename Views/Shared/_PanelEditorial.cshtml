@@ -1,0 +1,50 @@
+@model string
+@{
+    var p = Model switch
+    {
+        "organizador" => (Sello: "Colectivos y espacios", Titulo: "Tu sala, tu cartelera.", Cita: "Cada velada empieza con un lugar que alguien decidió abrir.", Cat: "Arte",
+            Pasos: new[] { ("edit_note", "Registra tu colectivo", "Datos del espacio y de la persona responsable."), ("event", "Publica tus eventos", "Ubicación en el mapa, cupos y contacto."), ("verified", "Verificación", "La administración revisa y marca tu cuenta como verificada.") }),
+        "admin" => (Sello: "Personal autorizado", Titulo: "Gobernanza cultural.", Cita: "Cuidar la cartelera es cuidar la confianza de quien asiste.", Cat: "Educativo",
+            Pasos: new[] { ("key", "Código de invitación", "Lo entrega quien administra la plataforma."), ("lock", "Contraseña robusta", "Letras, números y un carácter especial."), ("shield_person", "Acceso a la consola", "Eventos, cuentas, reservas y reportes.") }),
+        "usuario" => (Sello: "Membresía gratuita", Titulo: "Vive la ciudad de cerca.", Cita: "Los mejores recuerdos suelen empezar con una reserva improvisada.", Cat: "Música",
+            Pasos: new[] { ("person_add", "Crea tu cuenta", "Nombre, correo, contraseña y ciudad."), ("confirmation_number", "Reserva", "Guarda tu cupo en los eventos publicados."), ("star", "Valora", "Cuenta cómo fue después de asistir.") }),
+        _ => (Sello: "NEXO Cultural", Titulo: "Cultura viva, aforos cuidados.", Cita: "Una ciudad se conoce por las puertas que se abren de noche.", Cat: "Entretenimiento",
+            Pasos: new[] { ("person", "Asistentes", "Tu perfil y las valoraciones de lo vivido."), ("groups", "Organizadores", "Publica eventos y controla sus cupos."), ("verified", "Curaduría", "Revisa y modera la cartelera.") })
+    };
+}
+<aside class="relative order-last lg:order-first overflow-hidden bg-gradient-to-br from-surface-container-low via-surface-container to-tertiary-fixed/50 p-space-lg md:p-space-xl flex flex-col gap-space-lg">
+    <span class="absolute -top-20 -left-16 w-72 h-72 rounded-full bg-secondary-fixed/60 blur-3xl pointer-events-none"></span>
+    <div class="relative flex flex-col items-start gap-space-md">
+        <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container-lowest/80 font-label-sm text-label-sm uppercase tracking-widest shadow-sm"><span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>@p.Sello</span>
+        <p class="font-headline-lg text-headline-lg text-primary">@p.Titulo</p>
+        <figure class="border-l-2 border-secondary pl-space-md">
+            <blockquote class="font-headline-sm text-headline-sm italic text-on-surface-variant">“@p.Cita”</blockquote>
+        </figure>
+    </div>
+    <div class="relative self-center w-full max-w-xs rotate-[-2deg] hover:rotate-0 transition-transform rounded-2xl bg-surface-container-lowest shadow-xl overflow-hidden" aria-hidden="true">
+        <partial name="_Portada" model='((string?)p.Cat, (string?)null, "h-28")' />
+        <div class="p-space-md">
+            <p class="font-label-sm text-label-sm uppercase tracking-widest text-secondary">Ejemplo · @p.Cat</p>
+            <p class="font-headline-sm text-headline-sm">Velada en el claustro</p>
+            <p class="flex items-center gap-1 font-body-sm text-body-sm text-on-surface-variant"><span class="material-symbols-outlined text-[15px]">calendar_today</span>Viernes · 20:00</p>
+        </div>
+    </div>
+    <ol class="relative flex flex-col gap-space-md">
+        @for (var i = 0; i < p.Pasos.Length; i++)
+        {
+            <li class="flex items-start gap-space-sm">
+                <span class="relative w-11 h-11 shrink-0 rounded-full bg-surface-container-lowest flex items-center justify-center shadow-sm">
+                    <span class="material-symbols-outlined text-[20px]">@p.Pasos[i].Item1</span>
+                    <span class="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-primary text-on-primary text-[10px] flex items-center justify-center">@(i + 1)</span>
+                </span>
+                <span><span class="block font-title-md text-title-md">@p.Pasos[i].Item2</span><span class="block font-body-sm text-body-sm text-on-surface-variant">@p.Pasos[i].Item3</span></span>
+            </li>
+        }
+    </ol>
+    <div class="relative mt-auto flex flex-wrap gap-space-xs">
+        @foreach (var (icono, texto) in new[] { ("lock", "Contraseña protegida con hash"), ("map", "Mapas OpenStreetMap"), ("money_off", "Sin pasarela de pago propia") })
+        {
+            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container-lowest/70 font-label-sm text-label-sm text-on-surface-variant"><span class="material-symbols-outlined text-[14px]">@icono</span>@texto</span>
+        }
+    </div>
+</aside>

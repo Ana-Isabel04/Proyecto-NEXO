@@ -1,0 +1,13 @@
+@model (string Url, string Texto, string? Icono)
+@{
+    var path = Context.Request.Path.Value?.TrimEnd('/') ?? "";
+    var activo = string.Equals(path, Model.Url.TrimEnd('/'), StringComparison.OrdinalIgnoreCase);
+}
+<a href="@Model.Url" aria-current="@(activo ? "page" : null)"
+   class="flex items-center whitespace-nowrap px-space-md py-space-sm rounded-lg font-label-lg text-label-lg transition-colors @(activo ? "bg-primary text-on-primary" : "text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface")">
+    @if (Model.Icono is not null)
+    {
+        <span class="material-symbols-outlined mr-3 text-[20px]">@Model.Icono</span>
+    }
+    @Model.Texto
+</a>

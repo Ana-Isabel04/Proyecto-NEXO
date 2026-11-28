@@ -1,0 +1,10 @@
+@model (string Antetitulo, string Titulo, string Texto, string Icono)
+<header class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-surface-container-low via-surface-container to-tertiary-fixed/40 p-space-lg md:p-space-xl mb-space-lg shadow-sm">
+    <span class="absolute -right-10 -top-16 w-64 h-64 rounded-full bg-secondary-fixed/50 blur-3xl pointer-events-none"></span>
+    <span class="material-symbols-outlined absolute right-8 bottom-2 text-[110px] opacity-[0.07] pointer-events-none" aria-hidden="true">@Model.Icono</span>
+    <div class="relative flex flex-col gap-space-xs">
+        <p class="flex items-center gap-space-xs font-label-sm text-label-sm uppercase tracking-widest font-bold text-on-surface-variant"><span class="material-symbols-outlined text-[16px] text-secondary">@Model.Icono</span>@Model.Antetitulo</p>
+        <h1 class="font-headline-lg text-headline-lg text-primary tracking-tight break-words">@Model.Titulo</h1>
+        <p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">@Model.Texto</p>
+    </div>
+</header>

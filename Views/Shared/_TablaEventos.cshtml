@@ -1,0 +1,28 @@
+@model IReadOnlyList<EventoListaViewModel>
+@if (Model.Count == 0)
+{
+    <partial name="_EstadoVacioPartial" model='new EstadoVacioViewModel("Sin eventos", "No hay eventos que coincidan.", "event_busy")' />
+}
+else
+{
+    <div class="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-space-md">
+        @foreach (var e in Model)
+        {
+            <article class="nx-subir bg-surface-container-lowest border border-surface-variant rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-0.5 transition-all flex flex-col break-words">
+                <div class="relative">
+                    <partial name="_Portada" model='((string?)e.Categoria, e.ImageUrl, "h-36")' />
+                    <div class="absolute left-3 top-3"><partial name="_Estado" model="e.EstadoVisible" /></div>
+                    <span class="absolute right-3 bottom-3 px-2.5 py-1 rounded-lg bg-surface/90 font-label-md text-label-md shadow-sm">@e.Fecha.ToString("dd/MM/yyyy")</span>
+                </div>
+                <div class="p-space-lg flex flex-col gap-space-sm flex-1">
+                    <p class="font-label-sm text-label-sm uppercase tracking-widest text-secondary">@e.Categoria</p>
+                    <h3 class="font-headline-sm text-headline-sm text-primary">@e.Titulo</h3>
+                    <p class="flex items-center gap-1 font-body-sm text-body-sm text-on-surface-variant"><span class="material-symbols-outlined text-[16px]">domain</span>@e.Organizador</p>
+                    <p class="flex items-center gap-1 font-body-sm text-body-sm text-on-surface-variant"><span class="material-symbols-outlined text-[16px]">location_on</span>@e.Lugar · @e.Fecha.ToString("HH:mm") h</p>
+                    <div class="mt-auto pt-space-sm"><partial name="_BarraAforo" model="e" /></div>
+                    <a href="/Admin/Eventos/@e.EventId" class="flex items-center justify-center gap-1 px-space-md py-2.5 rounded-xl bg-primary text-on-primary font-label-md text-label-md uppercase"><span class="material-symbols-outlined text-[16px]">visibility</span>Revisar ficha</a>
+                </div>
+            </article>
+        }
+    </div>
+}

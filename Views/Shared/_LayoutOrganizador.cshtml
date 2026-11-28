@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <partial name="_Head" />
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body class="bg-background font-body-md text-on-surface antialiased min-h-screen flex flex-col">
+    <header class="sticky top-0 w-full z-50 bg-surface/90 backdrop-blur-md shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
+        <div class="min-h-20 w-full px-margin md:px-margin-desktop py-space-sm flex flex-wrap items-center justify-between gap-space-md">
+            <div class="flex items-center gap-space-lg">
+                <a href="/Organizador" class="flex items-center gap-space-sm">
+                    <span class="font-headline-md text-headline-md tracking-tight font-medium text-primary">NEXO</span>
+                    <span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant font-semibold">Cultura</span>
+                </a>
+                <div class="flex items-center gap-space-xs bg-surface-container px-space-sm py-1 rounded-full">
+                    <span class="w-2 h-2 rounded-full bg-secondary"></span>
+                    <span class="font-label-sm text-label-sm text-on-surface font-semibold">Organizador</span>
+                </div>
+            </div>
+            <nav class="flex items-center gap-space-xs overflow-x-auto max-w-full">
+                <partial name="_NavLink" model='("/Organizador", "Dashboard", (string?)null)' />
+                <partial name="_NavLink" model='("/Organizador/CrearEvento", "Crear evento", (string?)null)' />
+                <partial name="_NavLink" model='("/Organizador/Reservas", "Reservas", (string?)null)' />
+            </nav>
+            <partial name="_Sesion" />
+        </div>
+    </header>
+    <main class="flex-1 w-full px-margin md:px-margin-desktop py-space-lg">
+        @RenderBody()
+    </main>
+    <footer class="w-full bg-surface-container-low py-space-xl">
+        <div class="px-margin md:px-margin-desktop font-body-sm text-body-sm text-on-surface-variant">
+            <span class="font-headline-sm text-headline-sm text-primary font-medium mr-space-sm">NEXO</span>Plataforma de Curaduría y Gestión Cultural © @DateTime.Now.Year.
+        </div>
+    </footer>
+    <partial name="_Scripts" />
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

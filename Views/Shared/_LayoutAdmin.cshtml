@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <partial name="_Head" />
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body class="bg-surface font-body-md text-on-surface antialiased min-h-screen">
+    <header class="fixed top-0 inset-x-0 z-50 bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
+        <div class="h-20 w-full px-margin md:px-margin-desktop flex items-center justify-between gap-space-lg">
+            <a href="/Admin" class="flex items-center gap-space-sm">
+                <span class="font-display text-headline-sm font-semibold tracking-tight text-primary">NEXO</span>
+                <span class="font-label-sm text-label-sm uppercase bg-surface-container-highest text-on-surface-variant px-2 py-0.5 rounded tracking-widest">Console</span>
+            </a>
+            <partial name="_Sesion" />
+        </div>
+    </header>
+    <aside class="fixed left-0 right-0 top-20 z-40 bg-surface-container-low px-space-md py-space-xs lg:right-auto lg:bottom-0 lg:w-72 lg:py-space-lg">
+        <p class="hidden lg:block px-space-sm mb-space-md font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant">Administración</p>
+        <nav class="flex gap-1.5 overflow-x-auto lg:flex-col">
+            @if (User.IsInRole(Roles.Admin))
+            {
+                <partial name="_NavLink" model='("/Admin", "Consola Central", "dashboard")' />
+            }
+            <partial name="_NavLink" model='("/Admin/Eventos", "Catálogo Eventos", "event_available")' />
+            @if (User.IsInRole(Roles.Admin))
+            {
+            <partial name="_NavLink" model='("/Admin/Usuarios", "Directorio Usuarios", "group")' />
+            <partial name="_NavLink" model='("/Admin/Reservas", "Reservas", "confirmation_number")' />
+            <partial name="_NavLink" model='("/Admin/Reportes", "Reportes", "analytics")' />
+            }
+        </nav>
+    </aside>
+    <main class="pt-36 lg:pt-20 lg:pl-72">
+        <div class="px-margin md:px-margin-desktop py-space-lg">
+            @RenderBody()
+        </div>
+    </main>
+    <partial name="_Scripts" />
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

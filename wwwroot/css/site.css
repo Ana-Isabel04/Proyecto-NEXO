@@ -1,0 +1,15 @@
+.material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+.field-validation-error, .validation-summary-errors { color: #ba1a1a; font-size: 13px; }
+.input-validation-error { box-shadow: 0 0 0 1px #ba1a1a; }
+
+/* Animaciones de interfaz */
+@keyframes nx-llenar { from { width: 0 } }
+@keyframes nx-subir { from { opacity: 0; transform: translateY(8px) } }
+@keyframes nx-pop { 50% { transform: scale(1.35) } }
+.nx-barra { animation: nx-llenar .9s ease-out; }
+.nx-subir { animation: nx-subir .45s ease-out backwards; }
+.nx-pop { animation: nx-pop .3s ease-out; }
+dialog.nx-dialogo::backdrop { background: rgba(28, 27, 27, .45); backdrop-filter: blur(3px); }
+@media (prefers-reduced-motion: reduce) { .nx-barra, .nx-subir, .nx-pop { animation: none; } }
+/* El atributo hidden debe ganar a las utilidades grid/flex (filtros en pantalla). */
+[hidden] { display: none !important; }

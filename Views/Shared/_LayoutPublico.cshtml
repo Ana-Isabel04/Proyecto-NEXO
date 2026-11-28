@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <partial name="_Head" />
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body class="bg-surface font-body-md text-body-md text-on-surface antialiased min-h-screen flex flex-col">
+    <header class="sticky top-0 w-full z-50 bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
+        <div class="min-h-20 max-w-[1440px] mx-auto px-margin md:px-margin-desktop py-space-sm flex flex-wrap items-center justify-between gap-space-md">
+            <a href="/" class="flex items-center gap-space-xs">
+                <span class="font-headline-md text-headline-md tracking-tight font-medium text-primary">NEXO</span>
+                <span class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant px-space-xs py-0.5 rounded bg-surface-container-high">Cultural</span>
+            </a>
+            <nav class="flex items-center gap-space-xs">
+                <partial name="_NavLink" model='("/", "Explorar eventos", (string?)null)' />
+                @if (User.IsInRole(Roles.Asistente))
+                {
+                    <partial name="_NavLink" model='("/Perfil", "Mi perfil", (string?)null)' />
+                }
+                @if (User.IsInRole(Roles.Organizador))
+                {
+                    <partial name="_NavLink" model='("/Organizador", "Mi panel", (string?)null)' />
+                }
+                @if (User.IsInRole(Roles.Curador))
+                {
+                    <partial name="_NavLink" model='("/Admin/Eventos", "Curaduría", (string?)null)' />
+                }
+                @if (User.IsInRole(Roles.Admin))
+                {
+                    <partial name="_NavLink" model='("/Admin", "Administración", (string?)null)' />
+                }
+            </nav>
+            <partial name="_Sesion" />
+        </div>
+    </header>
+    <main class="flex-1 w-full max-w-[1440px] mx-auto px-margin md:px-margin-desktop py-space-lg">
+        @RenderBody()
+    </main>
+    <footer class="w-full bg-surface-container-low py-space-xl">
+        <div class="max-w-[1440px] mx-auto px-margin md:px-margin-desktop font-body-sm text-body-sm text-on-surface-variant">
+            <span class="font-headline-sm text-headline-sm text-primary font-medium mr-space-sm">NEXO</span>© @DateTime.Now.Year NEXO Cultural Platform.
+        </div>
+    </footer>
+    <partial name="_Scripts" />
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

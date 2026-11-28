@@ -1,0 +1,11 @@
+@model EventoListaViewModel
+@{ var pct = Model.Capacidad > 0 ? (int)Math.Round(100d * Model.Reservados / Model.Capacidad) : 0; }
+<div class="flex flex-col gap-1.5 w-full">
+    <div class="flex justify-between gap-space-sm font-label-sm text-label-sm text-on-surface-variant">
+        <span>Aforo @pct% · @Model.Reservados / @Model.Capacidad</span>
+        <span class="@(pct >= 90 ? "text-secondary font-bold" : "")">@(Model.Disponibles == 0 ? "Agotado" : $"{Model.Disponibles} disponibles")</span>
+    </div>
+    <div class="h-2.5 w-full rounded-full bg-surface-container-highest overflow-hidden" role="progressbar" aria-label="Ocupación" aria-valuenow="@pct" aria-valuemin="0" aria-valuemax="100">
+        <div class="nx-barra h-full rounded-full bg-gradient-to-r @(pct >= 90 ? "from-secondary to-secondary-container" : "from-primary to-on-primary-container")" style="width:@(pct)%"></div>
+    </div>
+</div>

@@ -1,0 +1,12 @@
+@model string
+@{
+    var (fondo, punto) = Model switch
+    {
+        "publicado" or "confirmada" or "activa" or "revisado" or "verificado" => ("bg-emerald-50 text-emerald-800", "bg-emerald-600"),
+        "en revisión" or "pendiente" or "sin verificar" => ("bg-amber-50 text-amber-900", "bg-amber-500"),
+        "cancelado" or "cancelada" or "suspendida" => ("bg-error-container text-on-error-container", "bg-error"),
+        "agotado" => ("bg-secondary-fixed text-on-secondary-fixed", "bg-secondary"),
+        _ => ("bg-surface-container-high text-on-surface-variant", "bg-outline")
+    };
+}
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full font-label-sm text-label-sm uppercase tracking-wider whitespace-nowrap @fondo"><span class="w-1.5 h-1.5 rounded-full @punto"></span>@Model</span>

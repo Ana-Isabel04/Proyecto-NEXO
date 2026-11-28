@@ -1,0 +1,39 @@
+@model IReadOnlyList<ReservaViewModel>
+@if (Model.Count == 0)
+{
+    <partial name="_EstadoVacioPartial" model='new EstadoVacioViewModel("Sin reservas", "Todavía no hay reservas para mostrar.", "confirmation_number")' />
+}
+else
+{
+    <div data-filtros="#lista-reservas" class="flex flex-wrap gap-space-xs mb-space-md">
+        @foreach (var (valor, texto, total) in new[] { ("", "Todas", Model.Count), (EstadoReserva.Confirmada, "Confirmadas", Model.Count(r => r.Estado == EstadoReserva.Confirmada)), (EstadoReserva.Cancelada, "Canceladas", Model.Count(r => r.Estado == EstadoReserva.Cancelada)) })
+        {
+            <button type="button" data-valor="@valor" aria-pressed="@(valor == "" ? "true" : "false")" class="px-space-md py-2 rounded-full bg-surface-container font-label-md text-label-md aria-pressed:bg-primary aria-pressed:text-on-primary">@texto · @total</button>
+        }
+    </div>
+    <ul id="lista-reservas" class="flex flex-col gap-space-sm">
+        <li data-sin-coincidencias hidden class="p-space-lg text-center text-on-surface-variant">No hay reservas con ese estado.</li>
+        @foreach (var r in Model)
+        {
+            <li data-tags="@r.Estado" class="bg-surface-container-lowest border border-surface-variant rounded-2xl p-space-md shadow-sm hover:shadow-md transition-shadow grid grid-cols-2 lg:grid-cols-12 gap-space-md items-center break-words">
+                <div class="col-span-2 lg:col-span-4 flex items-center gap-space-sm min-w-0">
+                    <partial name="_Avatar" model='(r.Usuario, "w-12 h-12 text-sm")' />
+                    <div class="min-w-0">
+                        <p class="font-title-md text-title-md">@r.Usuario</p>
+                        <p class="font-body-sm text-body-sm text-on-surface-variant break-all">@r.Email</p>
+                    </div>
+                </div>
+                <div class="lg:col-span-3 min-w-0">
+                    <p class="inline-block px-2 py-0.5 rounded bg-surface-container font-label-lg text-label-lg">@r.Codigo</p>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant">@r.Evento</p>
+                </div>
+                <div class="lg:col-span-2">
+                    <p class="font-headline-sm text-headline-sm">@r.Total.ToString("0.00") €</p>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant">@r.Cantidad @(r.Cantidad == 1 ? "cupo" : "cupos")</p>
+                </div>
+                <p class="lg:col-span-2 font-body-sm text-body-sm text-on-surface-variant">@DateTime.SpecifyKind(r.Fecha, DateTimeKind.Utc).ToLocalTime().ToString("dd/MM/yyyy HH:mm")</p>
+                <div class="lg:col-span-1 justify-self-start lg:justify-self-end"><partial name="_Estado" model="r.Estado" /></div>
+            </li>
+        }
+    </ul>
+}

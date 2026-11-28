@@ -1,0 +1,20 @@
+@model (string Texto, int Valor, string Icono)
+@{
+    var (circulo, linea) = Model.Icono switch
+    {
+        "assignment_late" or "pending" => ("bg-amber-100 text-amber-800", "from-amber-400"),
+        "flag" => ("bg-error-container text-on-error-container", "from-error"),
+        "groups" or "group" => ("bg-secondary-fixed text-on-secondary-fixed", "from-secondary"),
+        "event_seat" => ("bg-emerald-100 text-emerald-800", "from-emerald-500"),
+        "confirmation_number" => ("bg-tertiary-fixed text-on-tertiary-fixed", "from-tertiary-fixed-dim"),
+        _ => ("bg-surface-container-high text-primary", "from-primary")
+    };
+}
+<div class="nx-subir relative overflow-hidden bg-surface-container-lowest border border-surface-variant rounded-2xl p-space-lg shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all flex flex-col justify-between gap-space-md min-h-36">
+    <span class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r @linea to-transparent"></span>
+    <div class="flex items-start justify-between gap-space-sm">
+        <span class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant">@Model.Texto</span>
+        <span class="w-11 h-11 shrink-0 rounded-full flex items-center justify-center @circulo"><span class="material-symbols-outlined text-[22px]">@Model.Icono</span></span>
+    </div>
+    <p class="font-display text-headline-lg text-primary">@Model.Valor.ToString("N0")</p>
+</div>
