@@ -10,3 +10,8 @@ appsettings.json
 appsettings.Development.json
 appsettings.*.json
 !appsettings.example.json
+
+# Cliente React
+client/node_modules/
+client/dist/
+wwwroot/app/
