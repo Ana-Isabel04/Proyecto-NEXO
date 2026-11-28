@@ -2,10 +2,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Nexo.Controllers;
 
-// Marcador temporal: las pantallas públicas (RF-01 a RF-36) se integran aquí.
+// La experiencia pública (RF-01 a RF-36) vive en el cliente React servido en /app.
 public class HomeController : Controller
 {
-    public IActionResult Index() => View();
+    public IActionResult Index() => Redirect("/app/");
 
     [IgnoreAntiforgeryToken]
     public IActionResult Error() => View();
