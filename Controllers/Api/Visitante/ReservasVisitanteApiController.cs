@@ -61,7 +61,8 @@ public class ReservasVisitanteApiController(NexoDbContext db) : VisitanteApiBase
     private IQueryable<Reservation> ConsultaReservas() => db.Reservations.AsNoTracking()
         .Include(r => r.Payments)
         .Include(r => r.Event).ThenInclude(e => e.Category)
-        .Include(r => r.Event).ThenInclude(e => e.Venue);
+        .Include(r => r.Event).ThenInclude(e => e.Venue)
+        .Include(r => r.Event).ThenInclude(e => e.Organizer);
 
     private static int HttpPara(int errorSql) => errorSql switch { 50001 or 50011 => 404, 50006 => 409, _ => 400 };
 
