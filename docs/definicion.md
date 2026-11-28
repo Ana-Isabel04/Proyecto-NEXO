@@ -62,41 +62,30 @@ Desarrollar NEXO como una plataforma web que centralice el descubrimiento, consu
 
 ## Alcance
 
-### Incluye
+### Incluye (versión entregada)
 
-NEXO contempla las siguientes funcionalidades y componentes dentro de su alcance:
-
-- Consulta pública de eventos publicados sin necesidad de iniciar sesión.
-- Búsqueda de eventos por nombre o términos relacionados.
-- Filtrado de eventos por fecha, hora, categoría, precio, distancia y disponibilidad.
-- Combinación de diferentes filtros para obtener resultados más específicos.
-- Visualización de eventos mediante un mapa interactivo.
-- Consulta detallada de cada evento, incluyendo nombre, descripción, fecha, hora, ubicación, precio, disponibilidad y organizador.
-- Registro e inicio de sesión de usuarios.
-- Reserva de entradas o cupos para eventos disponibles.
-- Consulta de las reservas realizadas por cada usuario.
-- Gestión de eventos por parte de los organizadores.
-- Creación, publicación, modificación y cancelación de eventos por parte de sus respectivos organizadores.
-- Consulta de las reservas asociadas a los eventos de un organizador.
-- Panel de administración para supervisar la plataforma.
-- Gestión y revisión de información relacionada con usuarios, organizadores, eventos, reservas y reportes según los permisos del administrador.
-- Integración con servicios externos de mapas y geolocalización.
-- Acceso a enlaces externos de reserva o pago cuando estos sean proporcionados por el organizador.
+- Catálogo público con búsqueda por texto, filtros por categoría, precio, fecha, hora, distancia y disponibilidad, y orden por fecha o precio.
+- Mapa de eventos con radio de distancia y detalle de cada evento.
+- Enlace externo de reserva o pago cuando el organizador lo define.
+- Reservas de 1 a 4 entradas, confirmación, "Mis reservas" y cancelación hasta 48 horas antes.
+- Registro e inicio de sesión con roles: asistente, organizador, curador y administrador.
+- Perfil del asistente y valoración de eventos ya realizados.
+- Panel del organizador: crear, publicar, editar y cancelar eventos propios, y consultar sus reservas.
+- Administración: moderación de eventos, cuentas, verificación de organizadores, reservas y reportes.
+- API REST con control de acceso por rol.
 
 ### No incluye
 
-Para la primera versión del proyecto, NEXO no contempla:
-
-- Implementar una pasarela de pagos propia.
-- Procesar directamente pagos con tarjeta, transferencias u otros medios dentro de NEXO.
-- Sustituir las plataformas externas de pago o reserva utilizadas por los organizadores.
-- Desarrollar una aplicación móvil nativa independiente de la plataforma web.
-- Gestionar físicamente los eventos ni controlar la asistencia en el lugar del evento.
-- Garantizar la disponibilidad, funcionamiento o validez de los servicios externos utilizados por los organizadores.
-- Permitir que un organizador modifique eventos pertenecientes a otro organizador.
-- Permitir que un usuario consulte o modifique las reservas privadas de otro usuario.
+- Pasarela de pagos propia ni procesamiento de pagos dentro de NEXO.
+- Sustituir las plataformas externas de pago o reserva de los organizadores.
+- Aplicación móvil nativa.
+- Gestión física de los eventos ni control de asistencia.
+- Garantizar la disponibilidad o validez de servicios externos.
+- Que un organizador modifique eventos de otro, o un usuario vea reservas ajenas.
 
 ## Funcionalidades
+
+> Lista de lo previsto en el primer entregable. El estado de cada punto en la versión final está en Alcance y en los requerimientos funcionales.
 
 ### Usuario
 
@@ -162,109 +151,111 @@ Para la primera versión del proyecto, NEXO no contempla:
 
 ## Requerimientos funcionales
 
+Estado en la versión final: **62 implementados**, **7 modificados** y **0 recortados** de 69.
+
 ### Autenticación y control de acceso
 
-| ID | Requerimiento | Rol | Prioridad |
-|---|---|---|---|
-| RF-01 | El sistema debe permitir iniciar sesión mediante correo electrónico y contraseña. | Usuario / Organizador / Administrador | Alta |
-| RF-02 | El sistema debe validar que las credenciales proporcionadas correspondan a una cuenta registrada y activa. | Usuario / Organizador / Administrador | Alta |
-| RF-03 | El sistema debe identificar el rol asociado a la cuenta autenticada y habilitar únicamente las funcionalidades correspondientes. | Usuario / Organizador / Administrador | Alta |
-| RF-04 | El sistema debe permitir consultar y buscar eventos publicados sin iniciar sesión. | Visitante / Usuario | Alta |
-| RF-05 | El sistema debe restringir las operaciones de reserva y consulta de reservas a usuarios autenticados. | Usuario | Alta |
-| RF-06 | El sistema debe impedir que un usuario acceda mediante la interfaz a funciones exclusivas de organizador o administrador. | Usuario | Alta |
-| RF-07 | El sistema debe permitir cerrar la sesión de la cuenta autenticada. | Usuario / Organizador / Administrador | Media |
+| ID | Requerimiento | Rol | Prioridad | Estado | Razón |
+|---|---|---|---|---|---|
+| RF-01 | El sistema debe permitir iniciar sesión mediante correo electrónico y contraseña. | Usuario / Organizador / Administrador | Alta | Implementado | Login en el cliente React (/app/login) y en /Auth/Login, con la misma cookie. |
+| RF-02 | El sistema debe validar que las credenciales proporcionadas correspondan a una cuenta registrada y activa. | Usuario / Organizador / Administrador | Alta | Implementado | Valida contraseña (BCrypt) y cuenta activa. |
+| RF-03 | El sistema debe identificar el rol asociado a la cuenta autenticada y habilitar únicamente las funcionalidades correspondientes. | Usuario / Organizador / Administrador | Alta | Modificado | Se agregó el rol curador además de asistente, organizador y administrador. |
+| RF-04 | El sistema debe permitir consultar y buscar eventos publicados sin iniciar sesión. | Visitante / Usuario | Alta | Implementado | API pública de eventos y pantallas React sin sesión. |
+| RF-05 | El sistema debe restringir las operaciones de reserva y consulta de reservas a usuarios autenticados. | Usuario | Alta | Implementado | La API de reservas exige rol asistente. |
+| RF-06 | El sistema debe impedir que un usuario acceda mediante la interfaz a funciones exclusivas de organizador o administrador. | Usuario | Alta | Implementado | Autorización por rol en controladores y API. |
+| RF-07 | El sistema debe permitir cerrar la sesión de la cuenta autenticada. | Usuario / Organizador / Administrador | Media | Implementado | Cierre de sesión desde el menú. |
 
 ### Descubrimiento, búsqueda y consulta de eventos
 
-| ID | Requerimiento | Rol | Prioridad |
-|---|---|---|---|
-| RF-08 | El sistema debe mostrar los eventos publicados y vigentes disponibles para consulta. | Visitante / Usuario | Alta |
-| RF-09 | El sistema debe permitir buscar eventos por nombre o términos relacionados con el evento. | Visitante / Usuario | Alta |
-| RF-10 | El sistema debe permitir filtrar eventos por fecha y hora. | Visitante / Usuario | Alta |
-| RF-11 | El sistema debe permitir filtrar eventos por categoría. | Visitante / Usuario | Alta |
-| RF-12 | El sistema debe permitir filtrar eventos por precio, incluyendo la identificación de eventos gratuitos. | Visitante / Usuario | Alta |
-| RF-13 | El sistema debe permitir filtrar eventos por distancia respecto a una ubicación de referencia cuando exista información geográfica disponible. | Visitante / Usuario | Alta |
-| RF-14 | El sistema debe permitir consultar la disponibilidad de un evento. | Visitante / Usuario | Alta |
-| RF-15 | El sistema debe permitir combinar varios filtros en una misma búsqueda. | Visitante / Usuario | Alta |
-| RF-16 | El sistema debe mostrar únicamente los eventos que cumplan los criterios de búsqueda y filtrado seleccionados. | Visitante / Usuario | Alta |
-| RF-17 | El sistema debe informar cuando una búsqueda o combinación de filtros no produzca resultados. | Visitante / Usuario | Media |
-| RF-18 | El sistema debe mostrar los eventos disponibles sobre un mapa interactivo mediante marcadores geográficos. | Visitante / Usuario | Alta |
-| RF-19 | El sistema debe permitir seleccionar un marcador para consultar información resumida del evento. | Visitante / Usuario | Alta |
-| RF-20 | El sistema debe mostrar el detalle completo de un evento seleccionado. | Visitante / Usuario | Alta |
-| RF-21 | El detalle del evento debe mostrar como mínimo nombre, descripción, categoría, fecha, hora, ubicación, precio, disponibilidad y organizador. | Visitante / Usuario | Alta |
-| RF-22 | El sistema debe mostrar la ubicación del evento mediante un servicio de mapas y geolocalización. | Visitante / Usuario | Alta |
-| RF-23 | El sistema debe mostrar el estado actual del evento cuando corresponda: publicado, disponible, agotado, cancelado o finalizado. | Visitante / Usuario | Alta |
+| ID | Requerimiento | Rol | Prioridad | Estado | Razón |
+|---|---|---|---|---|---|
+| RF-08 | El sistema debe mostrar los eventos publicados y vigentes disponibles para consulta. | Visitante / Usuario | Alta | Implementado | Lista los publicados que aún no han pasado. |
+| RF-09 | El sistema debe permitir buscar eventos por nombre o términos relacionados con el evento. | Visitante / Usuario | Alta | Implementado | Busca por nombre, recinto y categoría, sin distinguir tildes. |
+| RF-10 | El sistema debe permitir filtrar eventos por fecha y hora. | Visitante / Usuario | Alta | Implementado | Filtro por fecha y por hora mínima de inicio. |
+| RF-11 | El sistema debe permitir filtrar eventos por categoría. | Visitante / Usuario | Alta | Implementado | Filtro por categoría. |
+| RF-12 | El sistema debe permitir filtrar eventos por precio, incluyendo la identificación de eventos gratuitos. | Visitante / Usuario | Alta | Implementado | Precio máximo; con 0 muestra los gratuitos. |
+| RF-13 | El sistema debe permitir filtrar eventos por distancia respecto a una ubicación de referencia cuando exista información geográfica disponible. | Visitante / Usuario | Alta | Implementado | Filtro de 1 a 10 km desde la ubicación del usuario o el centro de Envigado; también en el mapa. |
+| RF-14 | El sistema debe permitir consultar la disponibilidad de un evento. | Visitante / Usuario | Alta | Implementado | Se muestran los cupos disponibles. |
+| RF-15 | El sistema debe permitir combinar varios filtros en una misma búsqueda. | Visitante / Usuario | Alta | Implementado | Combina texto, categoría, precio, fecha, hora, distancia y disponibilidad. |
+| RF-16 | El sistema debe mostrar únicamente los eventos que cumplan los criterios de búsqueda y filtrado seleccionados. | Visitante / Usuario | Alta | Implementado | La consulta devuelve solo coincidencias. |
+| RF-17 | El sistema debe informar cuando una búsqueda o combinación de filtros no produzca resultados. | Visitante / Usuario | Media | Implementado | Mensaje de búsqueda sin resultados. |
+| RF-18 | El sistema debe mostrar los eventos disponibles sobre un mapa interactivo mediante marcadores geográficos. | Visitante / Usuario | Alta | Implementado | Mapa con marcadores y resumen emergente (/app/mapa). |
+| RF-19 | El sistema debe permitir seleccionar un marcador para consultar información resumida del evento. | Visitante / Usuario | Alta | Implementado | Mapa con marcadores y resumen emergente (/app/mapa). |
+| RF-20 | El sistema debe mostrar el detalle completo de un evento seleccionado. | Visitante / Usuario | Alta | Implementado | Pantalla /app/evento/{id}. |
+| RF-21 | El detalle del evento debe mostrar como mínimo nombre, descripción, categoría, fecha, hora, ubicación, precio, disponibilidad y organizador. | Visitante / Usuario | Alta | Implementado | El detalle incluye el organizador. |
+| RF-22 | El sistema debe mostrar la ubicación del evento mediante un servicio de mapas y geolocalización. | Visitante / Usuario | Alta | Implementado | Mapa en el detalle del evento. |
+| RF-23 | El sistema debe mostrar el estado actual del evento cuando corresponda: publicado, disponible, agotado, cancelado o finalizado. | Visitante / Usuario | Alta | Implementado | El detalle indica disponible, agotado, cancelado o finalizado. |
 
 ### Reservas
 
-| ID | Requerimiento | Rol | Prioridad |
-|---|---|---|---|
-| RF-24 | El sistema debe permitir a un usuario autenticado iniciar una reserva desde el detalle de un evento disponible. | Usuario | Alta |
-| RF-25 | El sistema debe permitir seleccionar la cantidad de entradas o cupos que desea reservar. | Usuario | Alta |
-| RF-26 | El sistema debe verificar la disponibilidad antes de confirmar una reserva. | Usuario | Alta |
-| RF-27 | El sistema no debe permitir confirmar una reserva cuando la cantidad solicitada supere la disponibilidad existente. | Usuario | Alta |
-| RF-28 | El sistema debe registrar la reserva asociándola al usuario autenticado y al evento seleccionado. | Usuario | Alta |
-| RF-29 | El sistema debe actualizar la disponibilidad del evento después de confirmar una reserva. | Usuario / Sistema | Alta |
-| RF-30 | El sistema debe generar un identificador único para cada reserva confirmada. | Usuario / Sistema | Alta |
-| RF-31 | El sistema debe mostrar una pantalla de confirmación después de registrar correctamente una reserva. | Usuario | Alta |
-| RF-32 | La confirmación debe mostrar como mínimo número de reserva, evento, fecha, hora, ubicación, cantidad de entradas y estado de la reserva. | Usuario | Alta |
-| RF-33 | El sistema debe permitir consultar las reservas asociadas al usuario autenticado. | Usuario | Alta |
-| RF-34 | El sistema debe mostrar el estado de cada reserva del usuario. | Usuario | Alta |
-| RF-35 | Cuando el evento utilice un mecanismo externo de pago o reserva, el sistema debe mostrar el enlace o medio de contacto proporcionado por el organizador. | Usuario | Alta |
-| RF-36 | El sistema no debe procesar directamente pagos mediante una pasarela propia en la primera versión. | Usuario / Sistema | Alta |
+| ID | Requerimiento | Rol | Prioridad | Estado | Razón |
+|---|---|---|---|---|---|
+| RF-24 | El sistema debe permitir a un usuario autenticado iniciar una reserva desde el detalle de un evento disponible. | Usuario | Alta | Implementado | Reserva desde el detalle. |
+| RF-25 | El sistema debe permitir seleccionar la cantidad de entradas o cupos que desea reservar. | Usuario | Alta | Implementado | De 1 a 4 entradas por reserva. |
+| RF-26 | El sistema debe verificar la disponibilidad antes de confirmar una reserva. | Usuario | Alta | Implementado | El procedimiento usp_CreateReservation bloquea la sobreventa. |
+| RF-27 | El sistema no debe permitir confirmar una reserva cuando la cantidad solicitada supere la disponibilidad existente. | Usuario | Alta | Implementado | El procedimiento usp_CreateReservation bloquea la sobreventa. |
+| RF-28 | El sistema debe registrar la reserva asociándola al usuario autenticado y al evento seleccionado. | Usuario | Alta | Implementado | Reserva con código único y cupos actualizados. |
+| RF-29 | El sistema debe actualizar la disponibilidad del evento después de confirmar una reserva. | Usuario / Sistema | Alta | Implementado | Reserva con código único y cupos actualizados. |
+| RF-30 | El sistema debe generar un identificador único para cada reserva confirmada. | Usuario / Sistema | Alta | Implementado | Reserva con código único y cupos actualizados. |
+| RF-31 | El sistema debe mostrar una pantalla de confirmación después de registrar correctamente una reserva. | Usuario | Alta | Implementado | Pantalla /app/confirmacion/{code}. |
+| RF-32 | La confirmación debe mostrar como mínimo número de reserva, evento, fecha, hora, ubicación, cantidad de entradas y estado de la reserva. | Usuario | Alta | Implementado | Pantalla /app/confirmacion/{code}. |
+| RF-33 | El sistema debe permitir consultar las reservas asociadas al usuario autenticado. | Usuario | Alta | Implementado | Pantalla /app/mis-reservas; permite cancelar hasta 48 h antes. |
+| RF-34 | El sistema debe mostrar el estado de cada reserva del usuario. | Usuario | Alta | Implementado | Pantalla /app/mis-reservas; permite cancelar hasta 48 h antes. |
+| RF-35 | Cuando el evento utilice un mecanismo externo de pago o reserva, el sistema debe mostrar el enlace o medio de contacto proporcionado por el organizador. | Usuario | Alta | Implementado | Se muestran el enlace externo y el contacto. |
+| RF-36 | El sistema no debe procesar directamente pagos mediante una pasarela propia en la primera versión. | Usuario / Sistema | Alta | Modificado | No hay pasarela; se elige un método de pago simulado que se registra como aprobado. |
 
 ### Perfil y experiencia del usuario
 
-| ID | Requerimiento | Rol | Prioridad |
-|---|---|---|---|
-| RF-37 | El sistema debe permitir al usuario autenticado consultar su información de perfil. | Usuario | Media |
-| RF-38 | El sistema debe permitir registrar un comentario o valoración sobre un evento cuando el usuario cumpla las condiciones definidas para realizarla. | Usuario | Media |
-| RF-39 | El sistema debe asociar cada comentario o valoración al usuario y al evento correspondiente. | Usuario / Sistema | Media |
-| RF-40 | El sistema debe impedir que un usuario registre una experiencia sobre un evento que no corresponda a una asistencia o reserva válida, de acuerdo con las reglas de negocio definidas. | Usuario / Sistema | Media |
+| ID | Requerimiento | Rol | Prioridad | Estado | Razón |
+|---|---|---|---|---|---|
+| RF-37 | El sistema debe permitir al usuario autenticado consultar su información de perfil. | Usuario | Media | Implementado | Pantalla /Perfil. |
+| RF-38 | El sistema debe permitir registrar un comentario o valoración sobre un evento cuando el usuario cumpla las condiciones definidas para realizarla. | Usuario | Media | Implementado | Desde /Perfil, sobre eventos ya realizados con reserva confirmada. |
+| RF-39 | El sistema debe asociar cada comentario o valoración al usuario y al evento correspondiente. | Usuario / Sistema | Media | Implementado | La valoración se une a la reserva, que identifica usuario y evento. |
+| RF-40 | El sistema debe impedir que un usuario registre una experiencia sobre un evento que no corresponda a una asistencia o reserva válida, de acuerdo con las reglas de negocio definidas. | Usuario / Sistema | Media | Implementado | Solo eventos realizados con reserva confirmada, una vez por evento. |
 
 ### Gestión de eventos por el organizador
 
-| ID | Requerimiento | Rol | Prioridad |
-|---|---|---|---|
-| RF-41 | El sistema debe permitir al organizador acceder a su panel de gestión. | Organizador | Alta |
-| RF-42 | El sistema debe permitir crear un evento desde el panel del organizador. | Organizador | Alta |
-| RF-43 | El sistema debe permitir registrar nombre, descripción, categoría, fecha, hora y ubicación del evento. | Organizador | Alta |
-| RF-44 | El sistema debe permitir registrar precio y capacidad del evento. | Organizador | Alta |
-| RF-45 | El sistema debe permitir registrar la disponibilidad inicial del evento. | Organizador | Alta |
-| RF-46 | El sistema debe permitir registrar un enlace externo de reserva o pago. | Organizador | Alta |
-| RF-47 | El sistema debe permitir registrar información de contacto relacionada con el evento. | Organizador | Alta |
-| RF-48 | El sistema debe validar los campos obligatorios antes de publicar un evento. | Organizador | Alta |
-| RF-49 | El sistema debe permitir publicar un evento cuando toda la información obligatoria sea válida. | Organizador | Alta |
-| RF-50 | El sistema debe mostrar al organizador únicamente los eventos asociados a su cuenta dentro de la sección de gestión propia. | Organizador | Alta |
-| RF-51 | El sistema debe permitir al organizador modificar sus propios eventos. | Organizador | Alta |
-| RF-52 | El sistema debe permitir actualizar precio, capacidad y disponibilidad de un evento propio cuando su estado lo permita. | Organizador | Alta |
-| RF-53 | El sistema debe permitir cancelar un evento creado por el organizador. | Organizador | Alta |
-| RF-54 | El sistema debe impedir que un organizador modifique o elimine eventos pertenecientes a otro organizador. | Organizador | Alta |
-| RF-55 | El sistema debe permitir al organizador consultar las reservas asociadas a sus eventos. | Organizador | Alta |
-| RF-56 | El sistema debe mostrar al organizador información suficiente para conocer la cantidad de reservas y cupos disponibles de cada evento. | Organizador | Alta |
+| ID | Requerimiento | Rol | Prioridad | Estado | Razón |
+|---|---|---|---|---|---|
+| RF-41 | El sistema debe permitir al organizador acceder a su panel de gestión. | Organizador | Alta | Implementado | Panel y formulario del organizador. |
+| RF-42 | El sistema debe permitir crear un evento desde el panel del organizador. | Organizador | Alta | Implementado | Panel y formulario del organizador. |
+| RF-43 | El sistema debe permitir registrar nombre, descripción, categoría, fecha, hora y ubicación del evento. | Organizador | Alta | Implementado | Panel y formulario del organizador. |
+| RF-44 | El sistema debe permitir registrar precio y capacidad del evento. | Organizador | Alta | Implementado | Panel y formulario del organizador. |
+| RF-45 | El sistema debe permitir registrar la disponibilidad inicial del evento. | Organizador | Alta | Modificado | No se digita: la base la calcula como capacidad menos cupos reservados. |
+| RF-46 | El sistema debe permitir registrar un enlace externo de reserva o pago. | Organizador | Alta | Implementado | Campo opcional de enlace externo. |
+| RF-47 | El sistema debe permitir registrar información de contacto relacionada con el evento. | Organizador | Alta | Implementado | Campo de contacto obligatorio. |
+| RF-48 | El sistema debe validar los campos obligatorios antes de publicar un evento. | Organizador | Alta | Implementado | Validación en formulario y servidor. |
+| RF-49 | El sistema debe permitir publicar un evento cuando toda la información obligatoria sea válida. | Organizador | Alta | Implementado | Validación en formulario y servidor. |
+| RF-50 | El sistema debe mostrar al organizador únicamente los eventos asociados a su cuenta dentro de la sección de gestión propia. | Organizador | Alta | Implementado | Solo se listan y editan eventos propios. |
+| RF-51 | El sistema debe permitir al organizador modificar sus propios eventos. | Organizador | Alta | Implementado | Solo se listan y editan eventos propios. |
+| RF-52 | El sistema debe permitir actualizar precio, capacidad y disponibilidad de un evento propio cuando su estado lo permita. | Organizador | Alta | Modificado | Se editan precio y capacidad; la disponibilidad se recalcula sola. |
+| RF-53 | El sistema debe permitir cancelar un evento creado por el organizador. | Organizador | Alta | Implementado | Al cancelar el evento se cancelan también sus reservas. |
+| RF-54 | El sistema debe impedir que un organizador modifique o elimine eventos pertenecientes a otro organizador. | Organizador | Alta | Implementado | Un evento ajeno se responde como inexistente (404). |
+| RF-55 | El sistema debe permitir al organizador consultar las reservas asociadas a sus eventos. | Organizador | Alta | Implementado | Reservas y cupos por evento. |
+| RF-56 | El sistema debe mostrar al organizador información suficiente para conocer la cantidad de reservas y cupos disponibles de cada evento. | Organizador | Alta | Implementado | Reservas y cupos por evento. |
 
 ### Administración de la plataforma
 
-| ID | Requerimiento | Rol | Prioridad |
-|---|---|---|---|
-| RF-57 | El sistema debe permitir al administrador acceder al panel administrativo. | Administrador | Alta |
-| RF-58 | El sistema debe permitir al administrador consultar los eventos registrados en la plataforma. | Administrador | Alta |
-| RF-59 | El sistema debe permitir al administrador revisar la información de un evento. | Administrador | Alta |
-| RF-60 | El sistema debe permitir al administrador aprobar, ocultar o reportar eventos de acuerdo con las reglas establecidas. | Administrador | Alta |
-| RF-61 | El sistema debe permitir al administrador consultar usuarios y organizadores registrados. | Administrador | Media |
-| RF-62 | El sistema debe permitir al administrador gestionar las cuentas de usuarios y organizadores de acuerdo con los permisos definidos. | Administrador | Media |
-| RF-63 | El sistema debe permitir al administrador consultar información relacionada con las reservas. | Administrador | Alta |
-| RF-64 | El sistema debe permitir al administrador consultar eventos reportados y su información asociada. | Administrador | Media |
-| RF-65 | El sistema debe restringir el acceso al panel administrativo exclusivamente a cuentas con rol de administrador. | Administrador / Sistema | Alta |
+| ID | Requerimiento | Rol | Prioridad | Estado | Razón |
+|---|---|---|---|---|---|
+| RF-57 | El sistema debe permitir al administrador acceder al panel administrativo. | Administrador | Alta | Implementado | Panel administrativo, catálogo y revisión. |
+| RF-58 | El sistema debe permitir al administrador consultar los eventos registrados en la plataforma. | Administrador | Alta | Implementado | Panel administrativo, catálogo y revisión. |
+| RF-59 | El sistema debe permitir al administrador revisar la información de un evento. | Administrador | Alta | Implementado | Panel administrativo, catálogo y revisión. |
+| RF-60 | El sistema debe permitir al administrador aprobar, ocultar o reportar eventos de acuerdo con las reglas establecidas. | Administrador | Alta | Modificado | Acciones: aprobar, ocultar, devolver a borrador y registrar reporte. |
+| RF-61 | El sistema debe permitir al administrador consultar usuarios y organizadores registrados. | Administrador | Media | Implementado | Listado de cuentas con búsqueda. |
+| RF-62 | El sistema debe permitir al administrador gestionar las cuentas de usuarios y organizadores de acuerdo con los permisos definidos. | Administrador | Media | Modificado | Activar o desactivar asistentes y organizadores, y verificar organizadores. |
+| RF-63 | El sistema debe permitir al administrador consultar información relacionada con las reservas. | Administrador | Alta | Implementado | Listado de reservas con búsqueda. |
+| RF-64 | El sistema debe permitir al administrador consultar eventos reportados y su información asociada. | Administrador | Media | Implementado | Pantalla de reportes con cambio de estado. |
+| RF-65 | El sistema debe restringir el acceso al panel administrativo exclusivamente a cuentas con rol de administrador. | Administrador / Sistema | Alta | Modificado | El rol curador accede a la moderación de eventos; el resto es solo del administrador. |
 
 ### Integración con mapas y servicios externos
 
-| ID | Requerimiento | Rol | Prioridad |
-|---|---|---|---|
-| RF-66 | El sistema debe integrar un servicio externo de mapas y geolocalización para representar la ubicación de los eventos. | Sistema | Alta |
-| RF-67 | El sistema debe almacenar o utilizar la información geográfica necesaria para representar cada evento en el mapa. | Sistema | Alta |
-| RF-68 | El sistema debe permitir consultar la ubicación de un evento desde su detalle. | Visitante / Usuario | Alta |
-| RF-69 | El sistema debe abrir el enlace externo de reserva o pago definido por el organizador cuando corresponda. | Usuario | Alta |
+| ID | Requerimiento | Rol | Prioridad | Estado | Razón |
+|---|---|---|---|---|---|
+| RF-66 | El sistema debe integrar un servicio externo de mapas y geolocalización para representar la ubicación de los eventos. | Sistema | Alta | Implementado | Leaflet con OpenStreetMap; latitud y longitud en el recinto. |
+| RF-67 | El sistema debe almacenar o utilizar la información geográfica necesaria para representar cada evento en el mapa. | Sistema | Alta | Implementado | Leaflet con OpenStreetMap; latitud y longitud en el recinto. |
+| RF-68 | El sistema debe permitir consultar la ubicación de un evento desde su detalle. | Visitante / Usuario | Alta | Implementado | Ubicación en el detalle, con enlace para llegar. |
+| RF-69 | El sistema debe abrir el enlace externo de reserva o pago definido por el organizador cuando corresponda. | Usuario | Alta | Implementado | El detalle abre el enlace externo en otra pestaña. |
 
 ## Requerimientos no funcionales
 
@@ -347,309 +338,104 @@ Las siguientes reglas representan las condiciones que NEXO debe respetar indepen
 
 ## 10. Modelo de datos
 
-El modelo de datos de NEXO debe almacenar la información necesaria para gestionar cuentas, roles, eventos, reservas, valoraciones y reportes.
+Modelo tal como quedó en SQL Server. Los nombres son los de las tablas y columnas reales.
 
 ### Entidades principales
 
-| Entidad | Atributos principales |
-|---|---|
-| **Usuario** | `id_usuario`, `nombre`, `correo`, `contrasena_hash`, `rol`, `estado`, `fecha_registro` |
-| **Evento** | `id_evento`, `organizador_id`, `nombre`, `descripcion`, `categoria`, `fecha`, `hora`, `ubicacion`, `latitud`, `longitud`, `precio`, `capacidad`, `disponibilidad`, `imagen`, `enlace_externo`, `contacto`, `estado` |
-| **Reserva** | `id_reserva`, `usuario_id`, `evento_id`, `cantidad`, `fecha_reserva`, `estado` |
-| **Valoracion** | `id_valoracion`, `usuario_id`, `evento_id`, `calificacion`, `comentario`, `fecha` |
-| **Reporte** | `id_reporte`, `usuario_id`, `evento_id`, `motivo`, `descripcion`, `fecha`, `estado` |
+| Tabla | Columnas | Uso |
+|---|---|---|
+| **Roles** | `RoleId`, `Name` | asistente, organizador, curador, admin |
+| **Users** | `UserId`, `FullName`, `Email`, `PasswordHash`, `RoleId`, `City`, `IsActive`, `CreatedAt`, `LastLoginAt` | Cuentas |
+| **Organizers** | `OrganizerId`, `OwnerUserId`, `Name`, `Description`, `IsVerified` | Perfil de organizador |
+| **Categories** | `CategoryId`, `Name`, `ColorHex` | Categorías de evento |
+| **Venues** | `VenueId`, `Name`, `Address`, `City`, `Latitude`, `Longitude`, `IsAccessible` | Recintos y ubicación |
+| **Events** | `EventId`, `Title`, `Description`, `Tag`, `ImageUrl`, `CategoryId`, `VenueId`, `OrganizerId`, `StartsAt`, `Price`, `Capacity`, `SoldCount`, `AvailableSeats`, `ExternalUrl`, `Contact`, `Status`, `CreatedAt` | Eventos |
+| **Reservations** | `ReservationId`, `Code`, `UserId`, `EventId`, `Quantity`, `UnitPrice`, `Subtotal`, `ServiceFee`, `Total`, `Status`, `CreatedAt`, `CancelledAt` | Reservas |
+| **Reviews** | `ReviewId`, `ReservationId`, `Rating`, `Comment`, `CreatedAt` | Valoraciones |
+| **Reports** | `ReportId`, `UserId`, `EventId`, `Reason`, `Description`, `Status`, `CreatedAt` | Reportes |
+| **Payments** | `PaymentId`, `ReservationId`, `Method`, `Amount`, `Status`, `ProviderRef`, `CreatedAt` | Registro del pago simulado de cada reserva |
+| **Favorites** | `UserId`, `EventId`, `CreatedAt` | Existe en el esquema; la aplicación no la usa |
 
 ### Relaciones
 
-**Usuario — Evento**
-
-Un organizador puede crear y administrar múltiples eventos. Cada evento pertenece a un único organizador.
-
 ```text
-Usuario (Organizador) 1 ───────── N Evento
+Roles        1 ── N Users
+Users        1 ── N Organizers     (dueño)
+Organizers   1 ── N Events
+Categories   1 ── N Events
+Venues       1 ── N Events
+Users        1 ── N Reservations   N ── 1 Events
+Reservations 1 ── 0..1 Reviews
+Reservations 1 ── N Payments
+Users        1 ── N Reports        N ── 1 Events
+Users        N ── N Events         (Favorites)
 ```
 
-**Usuario — Reserva**
+### Procedimientos almacenados
 
-Un usuario puede realizar múltiples reservas y cada reserva pertenece a un único usuario.
-
-```text
-Usuario 1 ───────── N Reserva
-```
-
-**Evento — Reserva**
-
-Un evento puede tener múltiples reservas mientras exista disponibilidad.
-
-```text
-Evento 1 ───────── N Reserva
-```
-
-**Usuario — Valoración**
-
-Un usuario puede registrar valoraciones de diferentes eventos cuando cumpla las condiciones definidas.
-
-```text
-Usuario 1 ───────── N Valoración
-```
-
-**Evento — Valoración**
-
-Un evento puede recibir múltiples valoraciones.
-
-```text
-Evento 1 ───────── N Valoración
-```
-
-**Usuario — Reporte**
-
-Un usuario puede generar múltiples reportes.
-
-```text
-Usuario 1 ───────── N Reporte
-```
-
-**Evento — Reporte**
-
-Un evento puede estar asociado a múltiples reportes realizados por usuarios.
-
-```text
-Evento 1 ───────── N Reporte
-```
-
-### Modelo relacional simplificado
-
-```text
-USUARIO
-────────────────────────────────
-PK  id_usuario
-    nombre
-    correo
-    contrasena_hash
-    rol
-    estado
-    fecha_registro
-          │
-          │ 1:N
-          ▼
-EVENTO
-────────────────────────────────
-PK  id_evento
-FK  organizador_id → Usuario
-    nombre
-    descripcion
-    categoria
-    fecha
-    hora
-    ubicacion
-    latitud
-    longitud
-    precio
-    capacidad
-    disponibilidad
-    imagen
-    enlace_externo
-    contacto
-    estado
-     │
-     ├─────────────── 1:N ───────────────► RESERVA
-     │                                      │
-     │                                      └── FK usuario_id
-     │
-     ├─────────────── 1:N ───────────────► VALORACION
-     │                                      │
-     │                                      └── FK usuario_id
-     │
-     └─────────────── 1:N ───────────────► REPORTE
-                                            │
-                                            └── FK usuario_id
-```
+- `usp_CreateReservation`: valida el evento y los cupos, crea la reserva y su registro de pago en una transacción.
+- `usp_CancelReservation`: cancela una reserva propia hasta 48 horas antes y libera los cupos.
 
 ### Consideraciones del modelo
 
-- `contrasena_hash` representa el valor almacenado de forma segura; la contraseña original no debe almacenarse en texto plano.
-- `organizador_id` relaciona cada evento con el usuario que posee el rol de organizador.
-- `capacidad` representa el número máximo de cupos disponibles para el evento.
-- `disponibilidad` representa los cupos que permanecen disponibles para nuevas reservas.
-- `latitud` y `longitud` permiten representar la ubicación del evento mediante el mapa.
-- `enlace_externo` permite almacenar el enlace de reserva o pago cuando el organizador utilice un servicio externo.
-- Las claves foráneas permiten mantener la relación entre usuarios, eventos, reservas, valoraciones y reportes.
+- `PasswordHash` guarda un hash BCrypt, nunca la contraseña.
+- `AvailableSeats` es una columna calculada (`Capacity - SoldCount`).
+- `Events.Status`: borrador, pendiente, publicado o cancelado. "Finalizado" se deduce de la fecha.
+- `Reservations.Status`: confirmada o cancelada. `Reports.Status`: pendiente, revisado o descartado.
+- La valoración se asocia a una reserva (única), de donde salen el usuario y el evento.
+
+### Cambios respecto al primer entregable
+
+El primer modelo tenía cinco entidades. Se separaron roles, organizadores, categorías y recintos en tablas propias, y la valoración pasó a depender de la reserva.
 
 ## Pantallas y flujo
 
+La interfaz tiene dos partes que comparten la sesión: un cliente React en `/app` para visitantes y asistentes, y vistas Razor para perfil, organizador y administración.
 
-### Pantallas del usuario
+### Pantallas del visitante y asistente (React)
 
-| Pantalla | Rol | Para qué sirve | Acceso / navegación |
-|---|---|---|---|
-| Inicio / Explorar eventos | Visitante / Usuario | Presenta el acceso principal a la búsqueda, categorías, eventos próximos y mapa. | Entrada principal → Mapa / Resultados / Detalle |
-| Mapa de eventos | Visitante / Usuario | Permite visualizar eventos geográficamente y consultar marcadores. | Inicio → Mapa → Marcador → Detalle |
-| Resultados de búsqueda | Visitante / Usuario | Presenta los eventos que coinciden con los criterios de búsqueda y filtros. | Inicio / Mapa → Buscar o Filtrar → Resultados |
-| Detalle del evento | Visitante / Usuario | Presenta toda la información necesaria del evento, ubicación, disponibilidad y acciones disponibles. | Resultados / Mapa → Detalle |
-| Inicio de sesión | Usuario | Permite autenticar la cuenta para acceder a operaciones privadas. | Acción privada → Inicio de sesión → Área autenticada |
-| Realizar reserva | Usuario | Permite seleccionar la cantidad de entradas y confirmar la reserva. | Detalle → Reservar → Reserva |
-| Confirmación de reserva | Usuario | Muestra el resultado de una reserva registrada y su identificador. | Reserva → Confirmación |
-| Mis reservas | Usuario | Permite consultar las reservas propias y su estado. | Área autenticada → Mis reservas → Detalle de reserva |
-| Perfil | Usuario | Permite consultar la información de la cuenta autenticada. | Área autenticada → Perfil |
-| Experiencia / valoración | Usuario | Permite registrar una valoración o comentario sobre un evento cuando corresponda. | Mis reservas / evento asistido → Valorar |
+| Pantalla | Ruta | Acceso |
+|---|---|---|
+| Inicio | `/app/` | Todos |
+| Búsqueda y filtros | `/app/buscar` | Todos |
+| Mapa de eventos | `/app/mapa` | Todos |
+| Detalle del evento | `/app/evento/{id}` | Todos |
+| Inicio de sesión | `/app/login` | Todos |
+| Registro | `/app/registro` | Todos |
+| Reservar | `/app/reservar/{id}` | Asistente |
+| Confirmación | `/app/confirmacion/{code}` | Asistente |
+| Mis reservas | `/app/mis-reservas` | Asistente |
+| Acceso denegado | `/app/denegado` | Todos |
 
-### Flujo principal del usuario
+### Pantallas con vistas Razor
 
-```text
-Inicio / Explorar
-       │
-       ├───────────────► Mapa de eventos
-       │                      │
-       │                      ▼
-       └───────────────► Resultados
-                              │
-                              ▼
-                       Detalle del evento
-                              │
-                    ┌─────────┴─────────┐
-                    │                   │
-                    ▼                   ▼
-               Iniciar sesión      Enlace externo
-                    │              de pago/reserva
-                    ▼
-                Reserva
-                    │
-                    ▼
-             Confirmación
-                    │
-                    ▼
-              Mis reservas
-```
+| Pantalla | Ruta | Rol |
+|---|---|---|
+| Inicio de sesión y registros | `/Auth/...` | Todos (administrador con código) |
+| Perfil | `/Perfil` | Asistente |
+| Valorar evento | `/Perfil/Valorar/{eventId}` | Asistente |
+| Panel del organizador | `/Organizador` | Organizador |
+| Crear y editar evento | `/Organizador/CrearEvento`, `/Organizador/EditarEvento/{id}` | Organizador |
+| Reservas del evento | `/Organizador/Reservas/{id}` | Organizador |
+| Panel administrativo | `/Admin` | Administrador |
+| Eventos y revisión | `/Admin/Eventos`, `/Admin/Eventos/{id}` | Administrador, curador |
+| Usuarios, reservas y reportes | `/Admin/Usuarios`, `/Admin/Reservas`, `/Admin/Reportes` | Administrador |
 
-### Navegación alternativa del usuario
+### Flujos
 
 ```text
-Área autenticada
-      │
-      ├── Mis reservas ──► Detalle de reserva
-      │                         │
-      │                         ▼
-      │                    Valorar evento
-      │
-      └── Perfil
+Visitante:     Inicio → Buscar / Mapa → Detalle → (enlace externo)
+Asistente:     Detalle → Iniciar sesión → Reservar → Confirmación → Mis reservas
+Organizador:   Iniciar sesión → Panel → Crear / Editar / Cancelar → Reservas del evento
+Administrador: Iniciar sesión → Panel → Eventos, Usuarios, Reservas, Reportes
+Curador:       Iniciar sesión → Eventos → Revisión
 ```
-
-### Pantallas del organizador
-
-| Pantalla | Rol | Para qué sirve | Acceso / navegación |
-|---|---|---|---|
-| Inicio de sesión | Organizador | Permite autenticar al organizador antes de acceder a funciones de gestión. | Inicio → Iniciar sesión → Panel |
-| Panel del organizador | Organizador | Presenta un resumen de sus eventos, disponibilidad y accesos a las funciones de administración. | Inicio de sesión → Panel |
-| Mis eventos | Organizador | Lista los eventos creados por el organizador y permite seleccionar uno para gestionarlo. | Panel → Mis eventos |
-| Crear evento | Organizador | Permite iniciar el registro de un nuevo evento. | Panel / Mis eventos → Crear evento |
-| Formulario del evento | Organizador | Permite registrar información general, categoría, fecha, hora, ubicación, precio, capacidad, contacto y enlace externo. | Crear evento → Formulario |
-| Vista previa / publicar | Organizador | Permite revisar la información antes de hacer público el evento. | Formulario → Vista previa → Publicar |
-| Editar evento | Organizador | Permite modificar la información de un evento propio. | Mis eventos → Seleccionar evento → Editar |
-| Reservas del evento | Organizador | Permite consultar las reservas asociadas a un evento y la cantidad de cupos disponibles. | Mis eventos → Evento → Reservas |
-
-### Flujo principal del organizador
-
-```text
-Inicio
-   │
-   ▼
-Inicio de sesión
-   │
-   ▼
-Panel del organizador
-   │
-   ├───────────────► Mis eventos
-   │                     │
-   │                     ├────────► Editar evento
-   │                     │
-   │                     └────────► Reservas del evento
-   │
-   └───────────────► Crear evento
-                         │
-                         ▼
-                  Formulario del evento
-                         │
-                         ▼
-                    Vista previa
-                         │
-                         ▼
-                      Publicar
-                         │
-                         ▼
-                  Evento publicado
-```
-
-### Pantallas del administrador
-
-| Pantalla | Rol | Para qué sirve | Acceso / navegación |
-|---|---|---|---|
-| Inicio de sesión administrativo | Administrador | Permite autenticar al administrador y controlar el acceso al panel. | Inicio → Iniciar sesión → Panel administrativo |
-| Panel administrativo | Administrador | Presenta los módulos de gestión y un resumen de información relevante. | Inicio de sesión → Panel |
-| Gestión de eventos | Administrador | Permite consultar los eventos registrados y sus estados. | Panel → Eventos |
-| Detalle / revisión del evento | Administrador | Permite revisar la información de un evento y ejecutar acciones administrativas. | Gestión de eventos → Seleccionar evento |
-| Gestión de usuarios y organizadores | Administrador | Permite consultar y gestionar las cuentas registradas según los permisos establecidos. | Panel → Usuarios |
-| Gestión de reservas | Administrador | Permite consultar información relacionada con las reservas de la plataforma. | Panel → Reservas |
-| Reportes | Administrador | Permite consultar eventos o contenido reportado. | Panel → Reportes |
-| Revisión de reporte | Administrador | Permite analizar la información reportada y ejecutar la acción administrativa correspondiente. | Reportes → Seleccionar reporte |
-
-### Flujo principal del administrador
-
-```text
-Inicio
-   │
-   ▼
-Inicio de sesión
-   │
-   ▼
-Panel administrativo
-   │
-   ├──────────────► Gestión de eventos
-   │                    │
-   │                    ▼
-   │              Revisión del evento
-   │                    │
-   │          ┌─────────┼─────────┐
-   │          ▼         ▼         ▼
-   │       Aprobar    Ocultar   Reportar
-   │
-   ├──────────────► Usuarios y organizadores
-   │
-   ├──────────────► Gestión de reservas
-   │
-   └──────────────► Reportes
-                        │
-                        ▼
-                  Revisión de reporte
-```
-
-### Pantallas compartidas y navegación general
-
-| Pantalla | Rol | Para qué sirve | Condición de acceso |
-|---|---|---|---|
-| Inicio | Visitante / Usuario / Organizador / Administrador | Punto de entrada general a la plataforma. | Pública |
-| Inicio de sesión | Usuario / Organizador / Administrador | Autentica las cuentas que requieren funciones privadas. | Pública |
-| Detalle del evento | Visitante / Usuario | Consulta información pública del evento. | Pública |
-| Mapa de eventos | Visitante / Usuario | Permite descubrir eventos mediante ubicación geográfica. | Pública |
-| Página de error / acceso denegado | Todos | Informa cuando una operación no puede ejecutarse o el rol no tiene permisos. | Según operación |
-
-### Reglas de navegación
-
-1. La consulta y búsqueda de eventos no requiere autenticación.
-2. El usuario debe autenticarse antes de confirmar una reserva.
-3. El organizador debe autenticarse antes de acceder a su panel.
-4. El administrador debe autenticarse antes de acceder al panel administrativo.
-5. Un organizador solo podrá acceder a la gestión de los eventos asociados a su cuenta.
-  Un usuario solo podrá consultar sus propias reservas.
-7. Las funcionalidades administrativas no deben estar disponibles para usuarios u organizadores.
-8. Un evento cancelado debe permanecer consultable cuando corresponda, pero no debe permitir nuevas reservas.
-9. Un evento finalizado no debe permitir nuevas reservas.
-10. Si el pago o reserva se realiza externamente, la navegación debe dirigir al enlace o medio de contacto proporcionado por el organizador.
-11. Si una búsqueda no devuelve resultados, el sistema debe conservar al usuario en el contexto de búsqueda y permitir modificar los criterios.
-12. Si una reserva no puede completarse por falta de disponibilidad, el sistema debe informar la situación sin registrar una reserva incompleta.
 
 ---
 
 ## Trazabilidad básica entre funcionalidades, requerimientos y pantallas
+
+> Trazabilidad del diseño original. Las pantallas y estados vigentes están en "Pantallas y flujo" y en los requerimientos funcionales.
 
 La siguiente relación permite comprobar que las funcionalidades principales cuentan con requerimientos y una representación en la interfaz.
 
@@ -673,6 +459,8 @@ La siguiente relación permite comprobar que las funcionalidades principales cue
 ---
 
 ## Flujo general de la plataforma
+
+> Flujo previsto en el diseño original. El flujo vigente está en "Pantallas y flujo".
 
 ```text
                          ┌───────────────────────┐
@@ -712,6 +500,8 @@ La siguiente relación permite comprobar que las funcionalidades principales cue
 ```
 
 ## Historias de usuario, casos de uso, restricciones y supuestos
+
+> Estado: HU-01 a HU-08 y CU-01 implementados.
 
 ### Historias de usuario
 
@@ -872,6 +662,104 @@ La siguiente relación permite comprobar que las funcionalidades principales cue
 - **S-07.** Se asume que las valoraciones se realizan únicamente cuando el usuario cumple las condiciones definidas por NEXO.
 - **S-08.** Se asume que el administrador utiliza sus permisos para supervisar y gestionar la información de acuerdo con las reglas establecidas para la plataforma.
 
+## 14. Arquitectura, base de datos y API
+
+### Entorno
+
+ASP.NET Core 10 MVC con Entity Framework Core 10 sobre SQL Server (LocalDB en desarrollo). Autenticación por cookie, contraseñas con BCrypt, protección antiforgery y Swagger. El cliente del visitante usa React 18, Vite, Tailwind y Leaflet; se compila en `wwwroot/app`. Las vistas Razor sirven Tailwind, Leaflet y jQuery desde `wwwroot/lib`. Las pruebas usan xUnit.
+
+### Estructura
+
+| Carpeta | Contenido |
+|---|---|
+| `Controllers/` | Controladores MVC; `Controllers/Api/` los de la API |
+| `Services/` | Lógica de negocio |
+| `Models/Entities/` | Entidades de la base |
+| `Models/ViewModels/` | Modelos de vista y de entrada, con validaciones |
+| `Data/` | `NexoDbContext`, `DbSeeder` y `Migrations/` |
+| `Views/` | Vistas Razor |
+| `wwwroot/` | CSS, JavaScript, imágenes y librerías |
+| `client/` | Cliente React |
+| `Nexo.Tests/` | Pruebas automatizadas |
+| `legacy/` | Código anterior de referencia; no se compila |
+
+### Base de datos
+
+SQL Server. El modelo está en la sección 10. Hay dos migraciones, que se aplican al arrancar la aplicación:
+
+- `InitialCreate`: esquema base, tomado de `nexo_database.sql`.
+- `AddContactAndReports`: columna `Events.Contact` y tabla `Reports`.
+
+### Endpoints de la API
+
+| Método | Ruta | Para qué sirve | Rol |
+|---|---|---|---|
+| GET | `/api/events` | Catálogo con búsqueda, filtros, orden y paginación. | Todos |
+| GET | `/api/events/{id}` | Detalle de un evento publicado. | Todos |
+| GET | `/api/csrf` | Token antiforgery del cliente. | Todos |
+| POST | `/api/auth/register` | Registra un asistente. | Todos |
+| POST | `/api/auth/login` | Inicia sesión. | Todos |
+| POST | `/api/auth/logout` | Cierra sesión. | Autenticado |
+| GET | `/api/auth/me` | Usuario actual. | Autenticado |
+| POST | `/api/reservations` | Crea una reserva si hay cupos. | Asistente |
+| GET | `/api/reservations/mine` | Reservas propias. | Asistente |
+| GET | `/api/reservations/{code}` | Detalle de una reserva propia. | Asistente |
+| POST | `/api/reservations/{code}/cancel` | Cancela una reserva propia. | Asistente |
+| GET | `/api/eventos/mios` | Lista los eventos propios. | Organizador |
+| POST | `/api/eventos` | Crea un evento (borrador o publicado). | Organizador |
+| PUT | `/api/eventos/{id}` | Actualiza un evento propio. | Organizador |
+| POST | `/api/eventos/{id}/cancelar` | Cancela un evento propio. | Organizador |
+| GET | `/api/reservas/evento/{eventId}` | Reservas y cupos de un evento propio. | Organizador |
+| GET | `/api/valoraciones` | Valoraciones del usuario autenticado. | Asistente |
+| POST | `/api/valoraciones` | Registra una valoración. | Asistente |
+| POST | `/api/admin/eventos/{id}/moderar` | Aprueba, oculta o devuelve un evento. | Administrador, curador |
+| POST | `/api/admin/eventos/{id}/reportes` | Registra un reporte. | Administrador, curador |
+| PUT | `/api/admin/usuarios/{id}/activo` | Activa o desactiva una cuenta. | Administrador |
+| PUT | `/api/admin/organizadores/{id}/verificado` | Verifica un organizador. | Administrador |
+| PUT | `/api/admin/reportes/{id}` | Cambia el estado de un reporte. | Administrador |
+
+## 15. Despliegue y configuración
+
+La plataforma **no está publicada todavía**; se ejecuta en local. La columna de producción describe lo previsto.
+
+| Elemento | Local (actual) | Producción (previsto) |
+|---|---|---|
+| Dirección | `http://localhost:5080` | Dirección pública de Azure App Service |
+| Base de datos | SQL Server LocalDB | Azure SQL |
+| Cadena de conexión (`ConnectionStrings:NexoDb`) | `appsettings.json`, excluido de Git | Configuración de la aplicación en Azure |
+| Datos de prueba (`Seed:DemoUsers`, `Seed:DemoEvents`, `Seed:DemoPassword`) | `appsettings.json` | Desactivados |
+| Código de administrador (`Registro:CodigoInvitacionAdmin`) | `appsettings.json`; vacío deshabilita el registro | Configuración de la aplicación en Azure |
+| Cliente React | `npm install` y `npm run build` en `client/` (requiere Node.js) | Compilado antes de publicar |
+| Swagger | Activo en `/swagger` | Desactivado |
+| HTTPS | No se fuerza | Redirección y HSTS |
+| Publicación | No aplica | Por definir |
+
+Arranque local: copiar `appsettings.example.json` como `appsettings.json`, compilar el cliente y ejecutar `dotnet run`. Las migraciones se aplican solas.
+
+### Pruebas realizadas (2026-11-28)
+
+- La aplicación y el cliente React compilan.
+- Las 76 pruebas automatizadas pasan sobre .NET 10.
+- Con una base temporal: catálogo y filtros, registro, reserva, cancelación, sobreventa, cancelación de un evento, permisos por rol, organizador y administración.
+- En el navegador: portada, búsqueda, filtro de distancia, detalle, reserva, confirmación, mis reservas y mapa.
+
+## 16. Aportes por integrante
+
+| Integrante | Aportes principales | Evidencia |
+|---|---|---|
+| Ana Isabel Patiño Carvajal | Documento: descripción, problema, actores, stakeholders, funcionalidades, requerimientos, pantallas y mockups. Commits de la base: configuración, base de datos, vistas Razor, autenticación, módulos por rol y API. Integración de las ramas de visitante. | PR #1, #2, #4, #10 a #14; merges `d72d1ea`, `1a474df`, `25a1440`, `9fdf431`, `e64135e` |
+| Juan David Rojas Villegas | Documento: objetivos, alcance, requerimientos no funcionales, reglas de negocio, modelo de datos, historias y casos de uso. Integración de la base en `main`. API del visitante, cliente React, datos de demostración, pruebas, recursos y actualización a .NET 10 para Azure. | PR #3, #5 a #8, #15 a #20; commits `26f30d9`, `d6f785f`, `ed5a1cd`, `17532e3`, `373c405`, `9816362` |
+
+## Historial de cambios
+
+| Fecha | Qué cambió | Por qué | Quién |
+|---|---|---|---|
+| 2026-09-23 a 2026-09-26 | Primera versión del documento y mockups. | Primer entregable. | Ana Isabel y Juan David |
+| 2026-11-27 | Se integró en `main` la base de la aplicación. | Implementación. | Ana Isabel y Juan David |
+| 2026-11-28 | Se integraron la API del visitante, el cliente React, las pruebas y recursos. | Completar el flujo de descubrimiento y reserva. | Juan David (código) y Ana Isabel (integración) |
+| 2026-11-28 | Corrección de la portada, filtros nuevos, organizador, contacto y estados en el detalle, y cancelación de reservas al cancelar un evento (RF-08, 10, 13, 15, 21, 23, 35, 53). | Completar requerimientos pendientes. | Ana Isabel |
+| 2026-11-28 | Estados de requerimientos, alcance, modelo, pantallas y secciones 14 a 16. | Que el documento describa la plataforma entregada. | Ana Isabel |
+
 ## Referencias bibliográficas
 
 [1] FIXR. (2024, 24 de abril). *How Gen Z ticket buyers discover events in 2024*. FIXR.  
@@ -888,11 +776,6 @@ https://baymard.com/research-articles/current-state-of-checkout-ux
 
 Francis, C. (2025, 14 de marzo). Social media event marketing: Expert advice beyond the basics. Eventbrite.
 
-### Uso de la IA en el proyecto 
-
-- **Chat GPT:** Se uso para la organización de los flujos de forma visual. Se le entregó el flujo en formato prosa y se le pidió que creará un diagrama apto para Markdown, se verificó que estuviera bien y se hicieron lso respectivos cambios. También se uso para el prompt que se uso para la creación de los mockups, se le entrego: tipo de diseño, letras, colores, funcionalidad por pantalla, etc. 
-- **Notebooklm:** Se uso para complementar y organizar el flujo de argumentos usados para la creación del planteamiento del problema. Se esocgieron los articulos, se leyeron y se sacó las ideas principales que ayudarian a formar el argumento. Se le pidió a la IA que verifiacará la coherencia entre los datos adquiridos en la investigación que se usarian para la posterior redacción. 
-- **Stitch IA:** Creación de mockups segun el prompt hecho con chatGPT, por restricciones del plan gratuito se tiene que modificar ciertas funcionalidades que no se harán en el proyecto, pero ya estan debidamente aclaradas en el documento.
 https://www.eventbrite.com/blog/how-to-promote-event-social-media-ds00/?
 
 ### Uso de la IA en el proyecto 
