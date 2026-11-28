@@ -1,0 +1,86 @@
+@model RegistroOrganizadorViewModel
+@{ Layout = "_LayoutAuth"; ViewData["Title"] = "Registro de organizador"; }
+<div class="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-[5fr_7fr] rounded-3xl overflow-hidden bg-surface-container-lowest shadow-2xl border border-surface-variant">
+    <partial name="_PanelEditorial" model='"organizador"' />
+    <section class="p-space-lg md:p-space-xl flex flex-col gap-space-lg min-w-0">
+        <header class="flex flex-col gap-space-xs">
+            <span class="self-start inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm uppercase tracking-wider"><span class="material-symbols-outlined text-[14px]">verified_user</span>Convocatoria abierta</span>
+            <h1 class="font-headline-lg text-headline-lg tracking-tight">Registro de Colectivo u Organizador</h1>
+            <p class="font-body-md text-body-md text-on-surface-variant">Publica tus veladas culturales y gestiona aforos.</p>
+        </header>
+        <form asp-action="RegistroOrganizador" method="post" class="flex flex-col gap-space-md">
+        <div asp-validation-summary="ModelOnly"></div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-space-lg gap-y-space-lg">
+            <div class="flex flex-col gap-space-md">
+<div class="flex items-center gap-2 pb-2 border-b border-surface-variant">
+    <span class="material-symbols-outlined text-[20px] text-secondary">domain</span>
+    <h2 class="font-title-md text-title-md tracking-tight">Información del Colectivo / Espacio</h2>
+</div>
+<div class="flex flex-col space-y-1.5">
+    <label asp-for="OrganizationName" class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider"></label>
+    <div class="relative flex items-center">
+        <span class="material-symbols-outlined absolute left-3.5 text-on-surface-variant text-[20px] pointer-events-none">storefront</span>
+        <input asp-for="OrganizationName" class="w-full h-12 pl-11 pr-4 rounded-lg border-0 bg-surface-container-low text-on-surface font-body-sm text-body-sm placeholder:text-outline focus:bg-surface-container-lowest focus:ring-1 focus:ring-primary transition-all"  />
+    </div>
+    <span asp-validation-for="OrganizationName"></span>
+</div>
+<div class="flex flex-col space-y-1.5">
+    <label asp-for="City" class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider"></label>
+    <div class="relative flex items-center">
+        <span class="material-symbols-outlined absolute left-3.5 text-on-surface-variant text-[20px] pointer-events-none">pin_drop</span>
+        <input asp-for="City" class="w-full h-12 pl-11 pr-4 rounded-lg border-0 bg-surface-container-low text-on-surface font-body-sm text-body-sm placeholder:text-outline focus:bg-surface-container-lowest focus:ring-1 focus:ring-primary transition-all"  />
+    </div>
+    <span asp-validation-for="City"></span>
+</div>
+                <div class="flex flex-col space-y-1.5">
+                    <label asp-for="Description" class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider"></label>
+                    <textarea asp-for="Description" rows="5" class="w-full px-4 py-3 rounded-lg border-0 bg-surface-container-low text-on-surface font-body-sm text-body-sm placeholder:text-outline focus:bg-surface-container-lowest focus:ring-1 focus:ring-primary transition-all"></textarea>
+                    <span asp-validation-for="Description"></span>
+                </div>
+            </div>
+            <div class="flex flex-col gap-space-md">
+<div class="flex items-center gap-2 pb-2 border-b border-surface-variant">
+    <span class="material-symbols-outlined text-[20px] text-secondary">person_pin</span>
+    <h2 class="font-title-md text-title-md tracking-tight">Responsable y Contacto</h2>
+</div>
+<div class="flex flex-col space-y-1.5">
+    <label asp-for="FullName" class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider"></label>
+    <div class="relative flex items-center">
+        <span class="material-symbols-outlined absolute left-3.5 text-on-surface-variant text-[20px] pointer-events-none">badge</span>
+        <input asp-for="FullName" class="w-full h-12 pl-11 pr-4 rounded-lg border-0 bg-surface-container-low text-on-surface font-body-sm text-body-sm placeholder:text-outline focus:bg-surface-container-lowest focus:ring-1 focus:ring-primary transition-all" autocomplete="name" />
+    </div>
+    <span asp-validation-for="FullName"></span>
+</div>
+<div class="flex flex-col space-y-1.5">
+    <label asp-for="Email" class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider"></label>
+    <div class="relative flex items-center">
+        <span class="material-symbols-outlined absolute left-3.5 text-on-surface-variant text-[20px] pointer-events-none">alternate_email</span>
+        <input asp-for="Email" class="w-full h-12 pl-11 pr-4 rounded-lg border-0 bg-surface-container-low text-on-surface font-body-sm text-body-sm placeholder:text-outline focus:bg-surface-container-lowest focus:ring-1 focus:ring-primary transition-all" autocomplete="email" />
+    </div>
+    <span asp-validation-for="Email"></span>
+</div>
+<div class="flex flex-col space-y-1.5">
+    <label asp-for="Password" class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider"></label>
+    <div class="relative flex items-center">
+        <span class="material-symbols-outlined absolute left-3.5 text-on-surface-variant text-[20px] pointer-events-none">lock</span>
+        <input asp-for="Password" class="w-full h-12 pl-11 pr-4 rounded-lg border-0 bg-surface-container-low text-on-surface font-body-sm text-body-sm placeholder:text-outline focus:bg-surface-container-lowest focus:ring-1 focus:ring-primary transition-all" autocomplete="new-password" />
+    </div>
+    <span asp-validation-for="Password"></span>
+</div>
+                <div class="flex items-start gap-space-sm rounded-xl bg-surface-container p-space-md">
+                    <span class="material-symbols-outlined text-secondary">verified_user</span>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant"><strong class="block text-on-surface">Proceso curatorial</strong>La administración verifica las cuentas de organizador.</p>
+                </div>
+            </div>
+        </div>
+<div class="bg-surface-container-low rounded-lg p-space-md">
+    <label class="flex items-start gap-3 font-body-sm text-body-sm"><input asp-for="AceptaTerminos" class="mt-0.5 w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary" /> Acepto los términos de servicio y la política de privacidad de NEXO.</label>
+    <span asp-validation-for="AceptaTerminos"></span>
+</div>
+<button type="submit" class="w-full h-14 rounded-xl bg-primary text-on-primary hover:bg-primary-container shadow-md font-label-lg text-label-lg uppercase tracking-wider flex items-center justify-center gap-2 transition-all active:scale-[0.99]">
+    Crear cuenta de organizador <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+        <p class="text-center font-body-sm text-body-sm text-on-surface-variant">¿Ya tienes credenciales? <a asp-action="Login" class="font-label-lg text-label-lg text-on-surface inline-flex items-center gap-1 hover:text-secondary transition-colors">Iniciar sesión</a></p>
+    </form>
+    </section>
+</div>

@@ -1,0 +1,102 @@
+@model DashboardOrganizadorViewModel
+@{
+    Layout = "_LayoutOrganizador";
+    ViewData["Title"] = "Panel del organizador";
+    var filtros = new (string? Valor, string Texto, string Icono)[] { (null, "Todos", "apps"), ("publicados", "Publicados", "public"), ("borradores", "Borradores", "draft"), ("revision", "En revisión", "visibility"), ("cancelados", "Cancelados", "block"), ("finalizados", "Finalizados", "task_alt") };
+    // La próxima velada solo se destaca en la vista sin filtro, donde están todos los eventos.
+    var proximo = Model.Filtro is null
+        ? Model.Eventos.Where(x => x.Estado == EstadoEvento.Publicado && !x.Finalizado).OrderBy(x => x.Fecha).FirstOrDefault()
+        : null;
+    var es = new System.Globalization.CultureInfo("es-ES");
+}
+<div class="max-w-[1440px] mx-auto flex flex-col gap-space-xl">
+    <header class="flex flex-col lg:flex-row lg:items-end justify-between gap-space-lg">
+        <div class="flex flex-col gap-space-xs min-w-0">
+            <div class="flex flex-wrap items-center gap-space-sm">
+                <span class="font-label-sm text-label-sm uppercase tracking-wider font-bold text-on-surface-variant">Panel de control curatorial</span>
+                <span class="inline-flex items-center gap-1 px-space-sm py-0.5 rounded-full bg-surface-container font-label-sm text-label-sm"><span class="material-symbols-outlined text-[14px] text-secondary">@(Model.Verificado ? "verified" : "pending")</span>@(Model.Verificado ? "Organizador verificado" : "Pendiente de verificación")</span>
+            </div>
+            <h1 class="font-headline-lg text-headline-lg md:font-display md:text-display text-primary tracking-tight break-words">@Model.Organizador</h1>
+            <p class="font-body-md text-body-md text-on-surface-variant">Control de aforos, reservas y publicación de tus experiencias.</p>
+        </div>
+        <a href="/Organizador/CrearEvento" class="self-start lg:self-auto flex items-center gap-space-xs px-space-lg py-3 rounded-xl bg-primary text-on-primary hover:bg-primary-container shadow-lg font-label-lg text-label-lg uppercase tracking-wider"><span class="material-symbols-outlined text-[18px]">add</span>Crear nuevo evento</a>
+    </header>
+
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-space-md lg:gap-gutter-desktop">
+        <partial name="_Indicador" model='("Veladas en cartelera", Model.Publicados, "theater_comedy")' />
+        <partial name="_Indicador" model='("Cupos reservados", Model.CuposReservados, "confirmation_number")' />
+        <partial name="_Indicador" model='("Cupos disponibles", Model.CuposDisponibles, "event_seat")' />
+    </div>
+
+    @if (proximo is not null)
+    {
+        <section class="flex flex-col gap-space-md">
+            <div class="flex items-center justify-between gap-space-sm">
+                <h2 class="flex items-center gap-space-xs font-headline-sm text-headline-sm text-primary"><span class="w-2 h-2 rounded-full bg-secondary"></span>Próxima velada</h2>
+                <span class="px-space-md py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm uppercase tracking-wider">En @Math.Max(0, (proximo.Fecha.Date - DateTime.Today).Days) días</span>
+            </div>
+            <article class="rounded-3xl overflow-hidden bg-surface-container-lowest border border-surface-variant shadow-xl grid grid-cols-1 lg:grid-cols-2">
+                <div class="relative min-h-64">
+                    <partial name="_Portada" model='((string?)proximo.Categoria, proximo.ImageUrl, "!absolute inset-0")' />
+                    <div class="absolute left-4 bottom-4 rounded-2xl bg-surface/90 backdrop-blur px-space-md py-space-sm text-center shadow-md">
+                        <p class="font-display text-headline-lg">@proximo.Fecha.ToString("dd")</p>
+                        <p class="font-label-sm text-label-sm uppercase tracking-widest">@proximo.Fecha.ToString("MMM yyyy", es)</p>
+                    </div>
+                    <span class="absolute left-4 top-4 px-3 py-1 rounded-full bg-surface/90 font-label-sm text-label-sm uppercase tracking-widest font-bold">@proximo.Categoria</span>
+                </div>
+                <div class="p-space-lg md:p-space-xl flex flex-col gap-space-md min-w-0 break-words">
+                    <p class="flex flex-wrap items-center gap-space-xs font-label-md text-label-md uppercase tracking-wider text-on-surface-variant"><span class="material-symbols-outlined text-[16px]">calendar_today</span>@proximo.Fecha.ToString("dddd d 'de' MMMM · HH:mm", es)</p>
+                    <h3 class="font-headline-lg text-headline-lg text-primary">@proximo.Titulo</h3>
+                    <p class="flex items-center gap-1 font-body-md text-body-md text-on-surface-variant"><span class="material-symbols-outlined text-[18px]">location_on</span>@proximo.Lugar</p>
+                    <div class="grid grid-cols-2 gap-space-sm">
+                        <div class="rounded-xl bg-surface-container-low p-space-md"><p class="font-label-sm text-label-sm uppercase text-on-surface-variant">Reservas</p><p class="font-headline-md text-headline-md">@proximo.Reservas</p></div>
+                        <div class="rounded-xl bg-surface-container-low p-space-md"><p class="font-label-sm text-label-sm uppercase text-on-surface-variant">Aforo emitido</p><p class="font-headline-md text-headline-md text-secondary">@proximo.Reservados / @proximo.Capacidad</p></div>
+                    </div>
+                    <partial name="_BarraAforo" model="proximo" />
+                    <div class="flex flex-wrap gap-space-sm mt-auto">
+                        <a href="/Organizador/Reservas/@proximo.EventId" class="inline-flex items-center gap-1 px-space-md py-3 rounded-xl bg-primary text-on-primary font-label-md text-label-md uppercase"><span class="material-symbols-outlined text-[16px]">group</span>Ver reservas</a>
+                        <a href="/Organizador/EditarEvento/@proximo.EventId" class="inline-flex items-center gap-1 px-space-md py-3 rounded-xl bg-surface-container font-label-md text-label-md uppercase"><span class="material-symbols-outlined text-[16px]">edit</span>Modificar ficha</a>
+                    </div>
+                </div>
+            </article>
+        </section>
+    }
+
+    <section class="flex flex-col gap-space-md">
+        <div class="flex flex-wrap items-center justify-between gap-space-sm">
+            <h2 class="font-headline-sm text-headline-sm text-primary">Rendimiento de cartelera</h2>
+            <nav class="flex flex-wrap gap-space-xs">
+                @foreach (var f in filtros)
+                {
+                    <a href="/Organizador@(f.Valor is null ? "" : "?filtro=" + f.Valor)" class="inline-flex items-center gap-1 px-space-md py-2 rounded-full font-label-md text-label-md @(Model.Filtro == f.Valor ? "bg-primary text-on-primary shadow-md" : "bg-surface-container text-on-surface-variant")"><span class="material-symbols-outlined text-[15px]">@f.Icono</span>@f.Texto</a>
+                }
+            </nav>
+        </div>
+        @if (Model.Eventos.Count == 0)
+        {
+            <partial name="_EstadoVacioPartial" model='new EstadoVacioViewModel("Sin eventos", "No hay eventos en esta vista.", "event", "Crear evento", "/Organizador/CrearEvento")' />
+        }
+        @foreach (var e in Model.Eventos)
+        {
+            <article class="nx-subir bg-surface-container-lowest border border-surface-variant rounded-2xl p-space-md shadow-sm hover:shadow-lg transition-shadow grid grid-cols-1 lg:grid-cols-12 gap-space-md items-center">
+                <div class="lg:col-span-5 flex gap-space-md items-center min-w-0">
+                    <partial name="_Portada" model='((string?)e.Categoria, e.ImageUrl, "w-24 h-24 rounded-xl shrink-0")' />
+                    <div class="min-w-0 break-words">
+                        <div class="flex flex-wrap items-center gap-space-xs mb-1"><partial name="_Estado" model="e.EstadoVisible" /><span class="font-label-sm text-label-sm uppercase text-on-surface-variant">@e.Categoria</span></div>
+                        <h3 class="font-headline-sm text-headline-sm">@e.Titulo</h3>
+                        <p class="font-body-sm text-body-sm text-on-surface-variant">@e.Fecha.ToString("dd/MM/yyyy HH:mm") · @e.Lugar · @e.Reservas reservas</p>
+                    </div>
+                </div>
+                <div class="lg:col-span-4"><partial name="_BarraAforo" model="e" /></div>
+                <div class="lg:col-span-3 flex flex-wrap lg:justify-end gap-space-xs">
+                    <a href="/Organizador/Reservas/@e.EventId" class="inline-flex items-center gap-1 px-space-md py-2 rounded-lg bg-surface-container font-label-md text-label-md"><span class="material-symbols-outlined text-[16px]">group</span>Reservas</a>
+                    @if (e.Gestionable)
+                    {
+                        <a href="/Organizador/EditarEvento/@e.EventId" class="inline-flex items-center gap-1 px-space-md py-2 rounded-lg bg-surface-container font-label-md text-label-md"><span class="material-symbols-outlined text-[16px]">edit</span>Editar</a>
+                        <button type="button" data-api="/api/eventos/@e.EventId/cancelar" data-method="POST" data-confirm="¿Cancelar este evento? No se puede deshacer." class="inline-flex items-center gap-1 px-space-md py-2 rounded-lg bg-error-container text-on-error-container font-label-md text-label-md"><span class="material-symbols-outlined text-[16px]">block</span>Cancelar evento</button>
+                    }
+                </div>
+            </article>
+        }
+    </section>
+</div>

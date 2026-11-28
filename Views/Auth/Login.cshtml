@@ -1,0 +1,41 @@
+@model LoginViewModel
+@{ Layout = "_LayoutAuth"; ViewData["Title"] = "Iniciar Sesión"; }
+<div class="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 rounded-3xl overflow-hidden bg-surface-container-lowest shadow-xl border border-surface-variant">
+    <partial name="_PanelEditorial" model='"acceso"' />
+    <section class="flex flex-col justify-center">
+        <div class="p-space-lg sm:p-space-xl flex flex-col gap-space-lg">
+            <h1 class="font-headline-lg text-headline-lg text-on-surface text-center">Iniciar Sesión</h1>
+            <form asp-action="Login" method="post" class="flex flex-col gap-space-md">
+                <div asp-validation-summary="ModelOnly"></div>
+                <input asp-for="ReturnUrl" type="hidden" />
+<div class="flex flex-col space-y-1.5">
+    <label asp-for="Email" class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider"></label>
+    <div class="relative flex items-center">
+        <span class="material-symbols-outlined absolute left-3.5 text-on-surface-variant text-[20px] pointer-events-none">alternate_email</span>
+        <input asp-for="Email" class="w-full h-12 pl-11 pr-4 rounded-lg border-0 bg-surface-container-low text-on-surface font-body-sm text-body-sm placeholder:text-outline focus:bg-surface-container-lowest focus:ring-1 focus:ring-primary transition-all" autocomplete="username" placeholder="nombre@ejemplo.com" />
+    </div>
+    <span asp-validation-for="Email"></span>
+</div>
+<div class="flex flex-col space-y-1.5">
+    <label asp-for="Password" class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider"></label>
+    <div class="relative flex items-center">
+        <span class="material-symbols-outlined absolute left-3.5 text-on-surface-variant text-[20px] pointer-events-none">lock</span>
+        <input asp-for="Password" class="w-full h-12 pl-11 pr-4 rounded-lg border-0 bg-surface-container-low text-on-surface font-body-sm text-body-sm placeholder:text-outline focus:bg-surface-container-lowest focus:ring-1 focus:ring-primary transition-all" autocomplete="current-password" />
+    </div>
+    <span asp-validation-for="Password"></span>
+</div>
+                <label class="flex items-center gap-3 font-body-sm text-body-sm"><input asp-for="Recordar" class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary" /> Recordar sesión en este equipo</label>
+<button type="submit" class="w-full h-14 rounded-xl bg-primary text-on-primary hover:bg-primary-container shadow-md font-label-lg text-label-lg uppercase tracking-wider flex items-center justify-center gap-2 transition-all active:scale-[0.99]">
+    Ingresar a mi cuenta <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+            </form>
+        </div>
+        <div class="mt-auto bg-surface-container-low px-space-lg py-space-lg text-center flex flex-col gap-space-sm">
+            <p class="font-body-sm text-body-sm text-on-surface-variant">¿Aún no formas parte de la red NEXO?</p>
+            <div class="flex flex-wrap justify-center gap-space-md">
+                <a asp-action="Registro" class="font-label-lg text-label-lg text-on-surface inline-flex items-center gap-1 hover:text-secondary transition-colors">Crear cuenta Asistente <span class="material-symbols-outlined text-[16px]">arrow_outward</span></a>
+                <a asp-action="RegistroOrganizador" class="font-label-lg text-label-lg text-on-surface inline-flex items-center gap-1 hover:text-secondary transition-colors">Registro Colectivo / Espacio <span class="material-symbols-outlined text-[16px]">arrow_outward</span></a>
+            </div>
+        </div>
+    </section>
+</div>

@@ -1,0 +1,23 @@
+@model List<EventoListaViewModel>
+@{ Layout = "_LayoutOrganizador"; ViewData["Title"] = "Reservas"; }
+<div class="max-w-[1440px] mx-auto">
+    <partial name="_Cabecera" model='("Control de asistencia", "Reservas por evento", "Elige un evento para ver quién ha reservado.", "confirmation_number")' />
+    @if (Model.Count == 0)
+    {
+        <partial name="_EstadoVacioPartial" model='new EstadoVacioViewModel("Sin eventos", "Crea un evento para empezar a recibir reservas.", "event", "Crear evento", "/Organizador/CrearEvento")' />
+    }
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-space-md">
+        @foreach (var e in Model)
+        {
+            <a href="/Organizador/Reservas/@e.EventId" class="nx-subir rounded-2xl overflow-hidden bg-surface-container-lowest border border-surface-variant shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all flex flex-col">
+                <partial name="_Portada" model='((string?)e.Categoria, e.ImageUrl, "h-28")' />
+                <span class="p-space-md flex flex-col gap-space-sm flex-1 break-words">
+                    <span class="self-start"><partial name="_Estado" model="e.EstadoVisible" /></span>
+                    <span class="font-headline-sm text-headline-sm">@e.Titulo</span>
+                    <span class="font-body-sm text-body-sm text-on-surface-variant">@e.Fecha.ToString("dd/MM/yyyy HH:mm") · @e.Reservas reservas</span>
+                    <span class="mt-auto block"><partial name="_BarraAforo" model="e" /></span>
+                </span>
+            </a>
+        }
+    </div>
+</div>

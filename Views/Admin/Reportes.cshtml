@@ -1,0 +1,49 @@
+@model List<ReporteViewModel>
+@{ Layout = "_LayoutAdmin"; ViewData["Title"] = "Reportes"; const string boton = "inline-flex items-center gap-1 px-space-md py-2 rounded-lg font-label-md text-label-md"; }
+<partial name="_Cabecera" model='("Incidencias", "Reportes", "Eventos señalados para revisión.", "flag")' />
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-space-md mb-space-lg">
+    <partial name="_Indicador" model='("Pendientes", Model.Count(r => r.Estado == EstadoReporte.Pendiente), "pending")' />
+    <partial name="_Indicador" model='("Revisados", Model.Count(r => r.Estado == EstadoReporte.Revisado), "event_seat")' />
+    <partial name="_Indicador" model='("Descartados", Model.Count(r => r.Estado == EstadoReporte.Descartado), "flag")' />
+</div>
+@if (Model.Count == 0)
+{
+    <partial name="_EstadoVacioPartial" model='new EstadoVacioViewModel("Sin reportes", "No hay eventos reportados.", "flag")' />
+}
+else
+{
+    <div data-filtros="#lista-reportes" class="flex flex-wrap gap-space-xs mb-space-md">
+        @foreach (var (valor, texto) in new[] { ("", "Todos"), (EstadoReporte.Pendiente, "Pendientes"), (EstadoReporte.Revisado, "Revisados"), (EstadoReporte.Descartado, "Descartados") })
+        {
+            <button type="button" data-valor="@valor" aria-pressed="@(valor == "" ? "true" : "false")" class="px-space-md py-2 rounded-full bg-surface-container font-label-md text-label-md aria-pressed:bg-primary aria-pressed:text-on-primary">@texto</button>
+        }
+    </div>
+    <div id="lista-reportes" class="flex flex-col gap-space-sm">
+        <p data-sin-coincidencias hidden class="p-space-lg text-center text-on-surface-variant">No hay reportes en este filtro.</p>
+        @foreach (var r in Model)
+        {
+            <article data-tags="@r.Estado" class="bg-surface-container-lowest border border-surface-variant rounded-2xl p-space-lg shadow-sm border-l-4 @(r.Estado == EstadoReporte.Pendiente ? "border-l-error" : "border-l-outline-variant") flex flex-col gap-space-md break-words">
+                <div class="flex flex-wrap items-start justify-between gap-space-sm">
+                    <div class="flex items-center gap-space-sm min-w-0">
+                        <partial name="_Avatar" model='(r.Usuario, "w-11 h-11 text-sm")' />
+                        <div><p class="font-title-md text-title-md">@r.Usuario</p><p class="font-label-sm text-label-sm uppercase text-on-surface-variant">@DateTime.SpecifyKind(r.Fecha, DateTimeKind.Utc).ToLocalTime().ToString("dd/MM/yyyy HH:mm")</p></div>
+                    </div>
+                    <partial name="_Estado" model="r.Estado" />
+                </div>
+                <div class="rounded-xl bg-surface-container-low p-space-md">
+                    <p class="font-label-sm text-label-sm uppercase tracking-widest text-secondary">@r.Evento</p>
+                    <h2 class="font-headline-sm text-headline-sm">@r.Motivo</h2>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant">@r.Descripcion</p>
+                </div>
+                <div class="flex flex-wrap justify-end gap-space-xs">
+                    <a href="/Admin/Eventos/@r.EventId" class="@boton bg-surface-container"><span class="material-symbols-outlined text-[16px]">visibility</span>Revisar evento</a>
+                    @if (r.Estado == EstadoReporte.Pendiente)
+                    {
+                        <button type="button" class="@boton bg-primary text-on-primary" data-api="/api/admin/reportes/@r.ReportId" data-method="PUT" data-body='{"estado":"revisado"}' data-confirm="¿Marcar este reporte como revisado?"><span class="material-symbols-outlined text-[16px]">task_alt</span>Marcar revisado</button>
+                        <button type="button" class="@boton bg-error-container text-on-error-container" data-api="/api/admin/reportes/@r.ReportId" data-method="PUT" data-body='{"estado":"descartado"}' data-confirm="¿Descartar este reporte?"><span class="material-symbols-outlined text-[16px]">delete</span>Descartar</button>
+                    }
+                </div>
+            </article>
+        }
+    </div>
+}

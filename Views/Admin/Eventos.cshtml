@@ -1,0 +1,17 @@
+@model List<EventoListaViewModel>
+@{
+    Layout = "_LayoutAdmin";
+    ViewData["Title"] = "Catálogo de eventos";
+    var actual = ViewData["Estado"] as string;
+}
+<partial name="_Cabecera" model='("Curaduría y revisión", "Catálogo de Eventos", $"{Model.Count} eventos en esta vista.", "event_available")' />
+<div class="rounded-2xl bg-surface-container-low p-space-md mb-space-lg flex flex-col xl:flex-row xl:items-center justify-between gap-space-sm">
+    <nav class="flex flex-wrap gap-1 p-1 rounded-xl bg-surface-container">
+        @foreach (var (valor, texto) in new[] { ("", "Todos"), (EstadoEvento.Publicado, "Publicados"), (EstadoEvento.Pendiente, "En revisión"), (EstadoEvento.Borrador, "Borradores"), (EstadoEvento.Cancelado, "Cancelados") })
+        {
+            <a href="/Admin/Eventos?estado=@valor" class="px-space-md py-1.5 rounded-lg font-label-md text-label-md @((actual ?? "") == valor ? "bg-surface-container-lowest text-primary shadow-sm" : "text-on-surface-variant")">@texto</a>
+        }
+    </nav>
+    <div class="-mb-space-md"><partial name="_Buscador" model='"Evento u organizador"' /></div>
+</div>
+<partial name="_TablaEventos" model="Model" />

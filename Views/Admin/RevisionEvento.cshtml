@@ -1,0 +1,111 @@
+@using System.Globalization
+@model RevisionEventoViewModel
+@{
+    Layout = "_LayoutAdmin";
+    ViewData["Title"] = "Revisión de evento";
+    var e = Model.Evento;
+    var moderable = e.Estado is EstadoEvento.Publicado or EstadoEvento.Pendiente;
+    var url = $"/api/admin/eventos/{e.EventId}/moderar";
+    const string card = "bg-surface-container-lowest border border-surface-variant rounded-2xl p-space-lg shadow-sm flex flex-col gap-space-md break-words";
+    const string boton = "px-space-md py-3 rounded-xl font-label-lg text-label-lg uppercase tracking-wider";
+    const string dato = "rounded-xl bg-surface-container-low p-space-md";
+    const string rotulo = "font-label-sm text-label-sm uppercase text-on-surface-variant";
+}
+<a href="/Admin/Eventos" class="inline-flex items-center gap-1 font-label-md text-label-md uppercase tracking-wider"><span class="material-symbols-outlined text-[18px]">arrow_back</span>Catálogo / Expediente #@e.EventId</a>
+<header class="flex flex-wrap items-center justify-between gap-space-sm mt-space-sm mb-space-lg">
+    <h1 class="font-headline-md text-headline-md text-primary">Revisión del evento</h1>
+    <partial name="_Estado" model="e.EstadoVisible" />
+</header>
+<div class="grid grid-cols-1 xl:grid-cols-3 gap-space-lg items-start">
+    <div class="xl:col-span-2 flex flex-col gap-space-lg min-w-0">
+        <section class="@card">
+            <div class="flex flex-wrap items-start justify-between gap-space-md">
+                <div class="min-w-0">
+                    <span class="px-2.5 py-0.5 rounded bg-surface-container font-label-sm text-label-sm uppercase tracking-wider">@e.Categoria</span>
+                    <h2 class="font-headline-lg text-headline-lg text-primary tracking-tight">@e.Titulo</h2>
+                    <p class="flex items-center gap-1 font-body-sm text-body-sm text-on-surface-variant">Organizado por <strong class="text-on-surface">@e.Organizador</strong><span class="material-symbols-outlined text-[16px] text-secondary" title="@(Model.OrganizadorVerificado ? "Verificado" : "Sin verificar")">@(Model.OrganizadorVerificado ? "verified" : "pending")</span></p>
+                </div>
+                <div class="text-right">
+                    <p class="font-label-sm text-label-sm uppercase text-on-surface-variant">Tarifa</p>
+                    <p class="font-headline-md text-headline-md">@(Model.Precio == 0 ? "Gratuito" : Model.Precio.ToString("0.00") + " €")</p>
+                </div>
+            </div>
+            <partial name="_Portada" model='((string?)e.Categoria, Model.ImagenUrl, "w-full h-72 rounded-2xl")' />
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-space-sm">
+                <div class="@dato"><p class="@rotulo">Fecha y hora</p><p class="font-title-md text-title-md">@e.Fecha.ToString("dd/MM/yyyy")</p><p class="font-body-sm text-body-sm text-on-surface-variant">@e.Fecha.ToString("HH:mm") h</p></div>
+                <div class="@dato"><p class="@rotulo">Recinto</p><p class="font-title-md text-title-md">@e.Lugar</p><p class="font-body-sm text-body-sm text-on-surface-variant">@Model.Ciudad</p></div>
+                <div class="@dato"><p class="@rotulo">Contacto</p><p class="font-body-sm text-body-sm break-all">@(Model.Contacto ?? "No indicado")</p></div>
+            </div>
+            <partial name="_BarraAforo" model="e" />
+        </section>
+        <section class="@card">
+            <h2 class="flex items-center gap-space-xs font-title-lg text-title-lg"><span class="material-symbols-outlined">menu_book</span>Memoria del evento</h2>
+            <p class="font-body-lg text-body-lg whitespace-pre-line">@(Model.Descripcion ?? "Sin descripción")</p>
+            @if (!string.IsNullOrEmpty(Model.ExternalUrl))
+            {
+                <p class="font-body-sm text-body-sm">Enlace externo: <a href="@Model.ExternalUrl" target="_blank" rel="noopener noreferrer" class="underline break-all">@Model.ExternalUrl</a></p>
+            }
+        </section>
+        <section class="@card">
+            <div class="flex flex-wrap items-center justify-between gap-space-sm">
+                <h2 class="flex items-center gap-space-xs font-title-lg text-title-lg"><span class="material-symbols-outlined">location_on</span>Ubicación del recinto</h2>
+                <span class="px-space-sm py-1 rounded bg-surface-container font-label-sm text-label-sm">@Model.Latitud.ToString(CultureInfo.InvariantCulture), @Model.Longitud.ToString(CultureInfo.InvariantCulture)</span>
+            </div>
+            <p class="font-body-sm text-body-sm text-on-surface-variant">@e.Lugar@(Model.Direccion is null ? "" : ", " + Model.Direccion), @Model.Ciudad</p>
+            <div id="mapa" class="h-80 rounded-xl overflow-hidden bg-surface-container relative z-0" data-lat="@Model.Latitud.ToString(CultureInfo.InvariantCulture)" data-lng="@Model.Longitud.ToString(CultureInfo.InvariantCulture)"></div>
+            <p id="mapa-aviso" role="status" class="font-body-sm text-body-sm text-error"></p>
+        </section>
+    </div>
+    <aside class="flex flex-col gap-space-lg min-w-0 xl:sticky xl:top-28">
+        <section class="@card">
+            <h2 class="flex items-center gap-space-xs font-title-lg text-title-lg"><span class="material-symbols-outlined">gavel</span>Resolución</h2>
+            @foreach (var (ok, texto) in new[] { (Model.OrganizadorVerificado, "Organizador verificado"), (!string.IsNullOrWhiteSpace(Model.Descripcion), "Descripción completa"), (!string.IsNullOrWhiteSpace(Model.Contacto), "Contacto indicado"), (!string.IsNullOrWhiteSpace(Model.ImagenUrl), "Imagen de portada"), (Model.Reportes.All(x => x.Estado != EstadoReporte.Pendiente), "Sin reportes pendientes") })
+            {
+                <p class="@dato flex items-center gap-space-sm font-body-sm text-body-sm"><span class="material-symbols-outlined text-[18px] @(ok ? "text-emerald-700" : "text-amber-600")">@(ok ? "check_circle" : "error")</span>@texto<span class="sr-only">: @(ok ? "cumple" : "falta")</span></p>
+            }
+            @if (!moderable)
+            {
+                <p class="font-body-sm text-body-sm text-on-surface-variant">Los borradores y los eventos cancelados no admiten moderación.</p>
+            }
+            else
+            {
+                if (e.Estado == EstadoEvento.Pendiente)
+                {
+                    <button type="button" data-api="@url" data-method="POST" data-body='{"accion":"aprobar"}' data-confirm="¿Aprobar y publicar este evento?" class="@boton bg-primary text-on-primary shadow-md"><span class="material-symbols-outlined text-[18px] align-middle mr-1">check_circle</span>Aprobar y publicar</button>
+                }
+                else
+                {
+                    <button type="button" data-api="@url" data-method="POST" data-body='{"accion":"ocultar"}' data-confirm="¿Ocultar este evento?" class="@boton bg-surface-container-high"><span class="material-symbols-outlined text-[18px] align-middle mr-1">visibility_off</span>Ocultar</button>
+                }
+                <button type="button" data-api="@url" data-method="POST" data-body='{"accion":"devolver"}' data-confirm="¿Devolver el evento a borrador?" class="@boton bg-error-container text-on-error-container"><span class="material-symbols-outlined text-[18px] align-middle mr-1">undo</span>Devolver al organizador</button>
+            }
+        </section>
+        <section class="@card">
+            <h2 class="flex items-center gap-space-xs font-title-lg text-title-lg"><span class="material-symbols-outlined">flag</span>Reportes</h2>
+            @if (Model.Reportes.Count == 0)
+            {
+                <p class="font-body-sm text-body-sm text-on-surface-variant">Este evento no tiene reportes.</p>
+            }
+            @foreach (var r in Model.Reportes)
+            {
+                <div class="@dato">
+                    <p class="font-title-md text-title-md">@r.Motivo</p>
+                    <p class="@rotulo">@r.Estado · @r.Usuario</p>
+                    <p class="font-body-sm text-body-sm">@r.Descripcion</p>
+                </div>
+            }
+            <form id="form-reporte" data-event="@e.EventId" class="flex flex-col gap-space-xs">
+                <input name="motivo" required maxlength="100" placeholder="Motivo del reporte" class="h-12 px-4 rounded-lg border-0 bg-surface-container-low font-body-sm text-body-sm focus:ring-1 focus:ring-primary" />
+                <textarea name="descripcion" maxlength="1000" rows="3" placeholder="Detalle (opcional)" class="px-4 py-3 rounded-lg border-0 bg-surface-container-low font-body-sm text-body-sm focus:ring-1 focus:ring-primary"></textarea>
+                <button class="@boton bg-surface-container">Reportar evento</button>
+            </form>
+        </section>
+    </aside>
+</div>
+@section Styles {
+    <link rel="stylesheet" href="~/lib/leaflet/leaflet.css" />
+}
+@section Scripts {
+    <script src="~/lib/leaflet/leaflet.js"></script>
+    <script src="~/js/revision.js" asp-append-version="true"></script>
+}

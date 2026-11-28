@@ -1,0 +1,56 @@
+@model RegistroAdminViewModel
+@{ Layout = "_LayoutAuth"; ViewData["Title"] = "Registro de administrador"; }
+<div class="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-[5fr_7fr] rounded-3xl overflow-hidden bg-surface-container-lowest shadow-2xl border border-surface-variant">
+    <partial name="_PanelEditorial" model='"admin"' />
+    <section class="p-space-lg md:p-space-xl flex flex-col gap-space-lg min-w-0">
+        <header class="flex flex-col gap-space-xs">
+            <span class="self-start inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm uppercase tracking-wider"><span class="material-symbols-outlined text-[14px]">verified_user</span>Acceso restringido</span>
+            <h1 class="font-headline-lg text-headline-lg tracking-tight">Portal de Gestión NEXO</h1>
+            <p class="font-body-md text-body-md text-on-surface-variant">Alta mediante código de invitación.</p>
+        </header>
+        <form asp-action="RegistroAdmin" method="post" class="flex flex-col gap-space-md">
+        <div asp-validation-summary="ModelOnly"></div>
+<div class="flex flex-col space-y-1.5">
+    <label asp-for="FullName" class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider"></label>
+    <div class="relative flex items-center">
+        <span class="material-symbols-outlined absolute left-3.5 text-on-surface-variant text-[20px] pointer-events-none">badge</span>
+        <input asp-for="FullName" class="w-full h-12 pl-11 pr-4 rounded-lg border-0 bg-surface-container-low text-on-surface font-body-sm text-body-sm placeholder:text-outline focus:bg-surface-container-lowest focus:ring-1 focus:ring-primary transition-all" autocomplete="name" />
+    </div>
+    <span asp-validation-for="FullName"></span>
+</div>
+<div class="flex flex-col space-y-1.5">
+    <label asp-for="Email" class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider"></label>
+    <div class="relative flex items-center">
+        <span class="material-symbols-outlined absolute left-3.5 text-on-surface-variant text-[20px] pointer-events-none">alternate_email</span>
+        <input asp-for="Email" class="w-full h-12 pl-11 pr-4 rounded-lg border-0 bg-surface-container-low text-on-surface font-body-sm text-body-sm placeholder:text-outline focus:bg-surface-container-lowest focus:ring-1 focus:ring-primary transition-all" autocomplete="email" />
+    </div>
+    <span asp-validation-for="Email"></span>
+</div>
+<div class="flex flex-col space-y-1.5">
+    <label asp-for="Password" class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider"></label>
+    <div class="relative flex items-center">
+        <span class="material-symbols-outlined absolute left-3.5 text-on-surface-variant text-[20px] pointer-events-none">lock</span>
+        <input asp-for="Password" class="w-full h-12 pl-11 pr-4 rounded-lg border-0 bg-surface-container-low text-on-surface font-body-sm text-body-sm placeholder:text-outline focus:bg-surface-container-lowest focus:ring-1 focus:ring-primary transition-all" autocomplete="new-password" />
+    </div>
+    <span asp-validation-for="Password"></span>
+</div>
+        <p class="flex items-center gap-1 font-body-sm text-body-sm text-on-surface-variant"><span class="material-symbols-outlined text-[15px]">info</span>Mínimo 10 caracteres con letras, números y un carácter especial.</p>
+<div class="flex flex-col space-y-1.5">
+    <label asp-for="CodigoInvitacion" class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider"></label>
+    <div class="relative flex items-center">
+        <span class="material-symbols-outlined absolute left-3.5 text-on-surface-variant text-[20px] pointer-events-none">key</span>
+        <input asp-for="CodigoInvitacion" class="w-full h-12 pl-11 pr-4 rounded-lg border-0 bg-surface-container-low text-on-surface font-body-sm text-body-sm placeholder:text-outline focus:bg-surface-container-lowest focus:ring-1 focus:ring-primary transition-all" autocomplete="off" />
+    </div>
+    <span asp-validation-for="CodigoInvitacion"></span>
+</div>
+<div class="bg-surface-container-low rounded-lg p-space-md">
+    <label class="flex items-start gap-3 font-body-sm text-body-sm"><input asp-for="AceptaTerminos" class="mt-0.5 w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary" /> Acepto las políticas de confidencialidad y los términos de administración.</label>
+    <span asp-validation-for="AceptaTerminos"></span>
+</div>
+<button type="submit" class="w-full h-14 rounded-xl bg-primary text-on-primary hover:bg-primary-container shadow-md font-label-lg text-label-lg uppercase tracking-wider flex items-center justify-center gap-2 transition-all active:scale-[0.99]">
+    Verificar y crear cuenta admin <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+        <p class="text-center font-body-sm text-body-sm text-on-surface-variant">¿Ya tienes credenciales? <a asp-action="Login" class="font-label-lg text-label-lg text-on-surface inline-flex items-center gap-1 hover:text-secondary transition-colors">Iniciar sesión</a></p>
+    </form>
+    </section>
+</div>
