@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <partial name="_Head" />
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body class="bg-surface font-body-md text-body-md text-on-surface antialiased min-h-screen flex flex-col justify-center items-center">
+    <main class="w-full flex flex-col items-center py-12 px-4 sm:px-6 lg:px-8">
+        <a href="/" class="mb-space-lg font-headline-md text-headline-md tracking-tight font-medium text-primary">NEXO</a>
+        @RenderBody()
+    </main>
+    <partial name="_Scripts" />
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,5 @@
+@model string
+<form method="get" class="flex gap-space-xs mb-space-md">
+    <input name="q" value="@ViewData["Q"]" placeholder="@Model" aria-label="@Model" class="h-10 w-72 min-w-0 max-w-full px-3 rounded-lg border-0 bg-surface-container-lowest font-body-sm text-body-sm" />
+    <button class="px-space-md rounded-lg bg-primary text-on-primary font-label-md text-label-md">Buscar</button>
+</form>
