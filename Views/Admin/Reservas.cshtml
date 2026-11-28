@@ -1,0 +1,10 @@
+@model List<ReservaViewModel>
+@{ Layout = "_LayoutAdmin"; ViewData["Title"] = "Reservas"; var confirmadas = Model.Where(r => r.Estado == EstadoReserva.Confirmada).ToList(); }
+<partial name="_Cabecera" model='("Monitor de reservas", "Reservas", "Las 200 reservas más recientes de la plataforma.", "confirmation_number")' />
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-space-md mb-space-lg">
+    <partial name="_Indicador" model='("Reservas en vista", Model.Count, "confirmation_number")' />
+    <partial name="_Indicador" model='("Cupos confirmados", confirmadas.Sum(r => r.Cantidad), "event_seat")' />
+    <partial name="_Indicador" model='("Personas distintas", Model.Select(r => r.Email).Distinct().Count(), "groups")' />
+</div>
+<partial name="_Buscador" model='"Código, usuario o evento"' />
+<partial name="_TablaReservas" model="Model" />

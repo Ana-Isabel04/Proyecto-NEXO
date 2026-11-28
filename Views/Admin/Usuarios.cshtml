@@ -1,0 +1,58 @@
+@model List<UsuarioViewModel>
+@{ Layout = "_LayoutAdmin"; ViewData["Title"] = "Usuarios"; const string boton = "inline-flex items-center gap-1 px-space-md py-2 rounded-lg font-label-md text-label-md"; }
+<partial name="_Cabecera" model='("Gobernanza de cuentas", "Directorio de Usuarios y Organizadores", "Activa, suspende y verifica las cuentas registradas.", "group")' />
+<div class="grid grid-cols-2 xl:grid-cols-4 gap-space-md mb-space-lg">
+    <partial name="_Indicador" model='("Cuentas en vista", Model.Count, "groups")' />
+    <partial name="_Indicador" model='("Organizadores", Model.Count(u => u.OrganizerId != null), "domain")' />
+    <partial name="_Indicador" model='("Sin verificar", Model.Count(u => u.OrganizerId != null && !u.Verificado), "pending")' />
+    <partial name="_Indicador" model='("Suspendidas", Model.Count(u => !u.Activo), "flag")' />
+</div>
+<partial name="_Buscador" model='"Nombre o correo"' />
+<div data-filtros="#lista-usuarios" class="flex flex-wrap gap-space-xs mb-space-md">
+    @foreach (var (valor, texto) in new[] { ("", "Todas"), (Roles.Asistente, "Asistentes"), (Roles.Organizador, "Organizadores"), (Roles.Curador, "Curaduría"), (Roles.Admin, "Administración"), ("suspendida", "Suspendidas") })
+    {
+        <button type="button" data-valor="@valor" aria-pressed="@(valor == "" ? "true" : "false")" class="px-space-md py-2 rounded-full bg-surface-container font-label-md text-label-md aria-pressed:bg-primary aria-pressed:text-on-primary">@texto</button>
+    }
+</div>
+@if (Model.Count == 0)
+{
+    <partial name="_EstadoVacioPartial" model='new EstadoVacioViewModel("Sin usuarios", "No hay cuentas que coincidan.", "group_off")' />
+}
+else
+{
+    <ul id="lista-usuarios" class="flex flex-col gap-space-sm">
+        <li data-sin-coincidencias hidden class="p-space-lg text-center text-on-surface-variant">No hay cuentas en este filtro.</li>
+        @foreach (var u in Model)
+        {
+            var rol = u.Rol switch { Roles.Admin => "bg-primary text-on-primary", Roles.Curador => "bg-secondary-fixed text-on-secondary-fixed", Roles.Organizador => "bg-tertiary-fixed text-on-tertiary-fixed", _ => "bg-surface-container-high" };
+            <li data-tags="@u.Rol|@(u.Activo ? "activa" : "suspendida")" class="bg-surface-container-lowest border border-surface-variant rounded-2xl p-space-md shadow-sm hover:shadow-md transition-shadow grid grid-cols-1 lg:grid-cols-12 gap-space-md items-center break-words">
+                <div class="lg:col-span-4 flex items-center gap-space-sm min-w-0">
+                    <partial name="_Avatar" model='(u.Nombre, "w-12 h-12 text-sm")' />
+                    <div class="min-w-0"><p class="font-title-md text-title-md">@u.Nombre</p><p class="font-body-sm text-body-sm text-on-surface-variant break-all">@u.Email</p></div>
+                </div>
+                <div class="lg:col-span-2 flex flex-col items-start gap-1">
+                    <span class="px-2.5 py-1 rounded-full font-label-sm text-label-sm uppercase tracking-wider @rol">@u.Rol</span>
+                    <span class="font-label-sm text-label-sm text-on-surface-variant">Alta @u.Alta.ToString("dd/MM/yyyy")</span>
+                </div>
+                <div class="lg:col-span-2 flex flex-col items-start gap-1">
+                    @if (u.OrganizerId is not null)
+                    {
+                        <span class="font-body-sm text-body-sm">@u.Organizacion</span>
+                        <partial name="_Estado" model='u.Verificado ? "verificado" : "sin verificar"' />
+                    }
+                </div>
+                <div class="lg:col-span-1"><partial name="_Estado" model='u.Activo ? "activa" : "suspendida"' /></div>
+                <div class="lg:col-span-3 flex flex-wrap lg:justify-end gap-space-xs">
+                    @if (u.Rol is Roles.Asistente or Roles.Organizador)
+                    {
+                        <button type="button" class="@boton @(u.Activo ? "bg-error-container text-on-error-container" : "bg-primary text-on-primary")" data-api="/api/admin/usuarios/@u.UserId/activo" data-method="PUT" data-body='{"valor":@(u.Activo ? "false" : "true")}' data-confirm="@(u.Activo ? "¿Suspender esta cuenta?" : "¿Reactivar esta cuenta?")"><span class="material-symbols-outlined text-[16px]">@(u.Activo ? "person_off" : "person_check")</span>@(u.Activo ? "Suspender" : "Activar")</button>
+                    }
+                    @if (u.OrganizerId is not null)
+                    {
+                        <button type="button" class="@boton bg-surface-container" data-api="/api/admin/organizadores/@u.OrganizerId/verificado" data-method="PUT" data-body='{"valor":@(u.Verificado ? "false" : "true")}' data-confirm="@(u.Verificado ? "¿Quitar la verificación?" : "¿Verificar este organizador?")"><span class="material-symbols-outlined text-[16px]">verified</span>@(u.Verificado ? "Quitar verificación" : "Verificar")</button>
+                    }
+                </div>
+            </li>
+        }
+    </ul>
+}

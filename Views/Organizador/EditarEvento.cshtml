@@ -1,0 +1,22 @@
+@model EventoFormViewModel
+@{
+    Layout = "_LayoutOrganizador";
+    ViewData["Title"] = "Editar evento";
+    var bloqueado = Model.Estado == EstadoEvento.Cancelado || Model.Datos.StartsAt <= DateTime.Now;
+}
+<div class="max-w-[1440px] mx-auto"><partial name="_Cabecera" model='("Gestión de ficha", "Editar evento", "Actualiza la información sin perder las reservas ya hechas.", "edit_square")' /></div>
+@if (bloqueado)
+{
+    <partial name="_EstadoVacioPartial" model='new EstadoVacioViewModel("Evento sin edición", "Los eventos cancelados o ya realizados no admiten cambios.", "lock", "Volver al panel", "/Organizador")' />
+}
+else
+{
+    <partial name="_EventoForm" model="Model" />
+}
+@section Styles {
+    <link rel="stylesheet" href="~/lib/leaflet/leaflet.css" />
+}
+@section Scripts {
+    <script src="~/lib/leaflet/leaflet.js"></script>
+    <script src="~/js/evento-form.js" asp-append-version="true"></script>
+}

@@ -1,0 +1,60 @@
+@model PerfilViewModel
+@{ ViewData["Title"] = "Mi perfil"; const string card = "bg-surface-container-lowest border border-surface-variant rounded-2xl p-space-lg shadow-sm"; }
+<header class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-surface-container-low via-surface-container to-secondary-fixed/60 p-space-lg md:p-space-xl mb-space-lg shadow-sm flex flex-col md:flex-row md:items-center gap-space-lg">
+    <span class="absolute -right-10 -bottom-20 w-72 h-72 rounded-full bg-tertiary-fixed/60 blur-3xl pointer-events-none"></span>
+    <div class="relative"><partial name="_Avatar" model='(Model.Nombre, "w-24 h-24 text-3xl ring-4 ring-surface-container-lowest")' /></div>
+    <div class="relative flex-1 min-w-0 break-words">
+        <p class="font-label-sm text-label-sm uppercase tracking-widest font-bold text-on-surface-variant">Expediente personal · Perfil de usuario</p>
+        <h1 class="font-headline-lg text-headline-lg text-primary tracking-tight">@Model.Nombre</h1>
+        <p class="font-body-sm text-body-sm text-on-surface-variant">@Model.Email</p>
+        <div class="flex flex-wrap gap-space-xs mt-space-sm">
+            @foreach (var (icono, texto) in new[] { ("badge", Model.Rol), ("location_on", Model.Ciudad ?? "Ciudad sin registrar"), ("event", "Desde " + Model.MiembroDesde.ToString("MM/yyyy")) })
+            {
+                <span class="inline-flex items-center gap-1 px-space-sm py-1 rounded-full bg-surface-container-lowest/80 font-label-md text-label-md"><span class="material-symbols-outlined text-[15px] text-secondary">@icono</span>@texto</span>
+            }
+        </div>
+    </div>
+</header>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-space-md mb-space-lg">
+    <partial name="_Indicador" model='("Eventos asistidos", Model.EventosAsistidos, "confirmation_number")' />
+    <partial name="_Indicador" model='("Reseñas publicadas", Model.Valoraciones.Count, "groups")' />
+    <partial name="_Indicador" model='("Por valorar", Model.PorValorar.Count, "pending")' />
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-space-lg items-start">
+    <section class="flex flex-col gap-space-md">
+        <h2 class="flex items-center gap-space-xs font-headline-sm text-headline-sm"><span class="w-2 h-2 rounded-full bg-secondary"></span>Eventos por valorar</h2>
+        @if (Model.PorValorar.Count == 0)
+        {
+            <partial name="_EstadoVacioPartial" model='new EstadoVacioViewModel("Nada pendiente", "Aquí aparecerán los eventos a los que asistas con reserva.", "event_available")' />
+        }
+        @foreach (var e in Model.PorValorar)
+        {
+            <article class="nx-subir bg-surface-container-lowest border border-surface-variant rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow flex flex-col sm:flex-row">
+                <partial name="_Portada" model='((string?)e.Categoria, e.ImagenUrl, "sm:w-40 h-32 sm:h-auto shrink-0")' />
+                <div class="p-space-md flex-1 min-w-0 break-words flex flex-col gap-space-xs">
+                    <p class="font-label-sm text-label-sm uppercase tracking-widest text-secondary">@e.Categoria</p>
+                    <h3 class="font-headline-sm text-headline-sm">@e.Titulo</h3>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant">@e.Fecha.ToString("dd/MM/yyyy HH:mm") · @e.Lugar</p>
+                    <a href="/Perfil/Valorar/@e.EventId" class="self-start inline-flex items-center gap-1 px-space-md py-2 rounded-lg bg-primary text-on-primary font-label-md text-label-md uppercase"><span class="material-symbols-outlined text-[16px]">star</span>Valorar</a>
+                </div>
+            </article>
+        }
+    </section>
+    <section class="flex flex-col gap-space-md">
+        <h2 class="flex items-center gap-space-xs font-headline-sm text-headline-sm"><span class="w-2 h-2 rounded-full bg-tertiary-fixed-dim"></span>Mis valoraciones</h2>
+        @if (Model.Valoraciones.Count == 0)
+        {
+            <p class="@card font-body-md text-body-md text-on-surface-variant">Todavía no has publicado valoraciones.</p>
+        }
+        @foreach (var v in Model.Valoraciones)
+        {
+            <article class="@card relative break-words">
+                <span class="material-symbols-outlined absolute right-4 top-3 text-[48px] opacity-10" aria-hidden="true">format_quote</span>
+                <p class="text-on-tertiary-container text-xl tracking-widest" aria-label="@v.Calificacion de 5">@(new string('★', v.Calificacion))@(new string('☆', 5 - v.Calificacion))</p>
+                <h3 class="font-title-lg text-title-lg">@v.Evento</h3>
+                <p class="font-headline-sm text-body-lg italic text-on-surface-variant">@v.Comentario</p>
+                <p class="font-label-sm text-label-sm uppercase text-on-surface-variant mt-space-xs">@v.Fecha.ToString("dd/MM/yyyy")</p>
+            </article>
+        }
+    </section>
+</div>
