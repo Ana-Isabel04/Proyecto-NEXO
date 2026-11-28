@@ -123,8 +123,20 @@ public class EventoService(NexoDbContext db)
         var bloqueo = Bloqueo(evento);
         if (bloqueo is not null) return bloqueo;
 
+        // En una transacción: primero el evento (deja de admitir reservas) y luego sus reservas.
+        await using var tx = await db.Database.BeginTransactionAsync();
         evento.Status = EstadoEvento.Cancelado;
-        return await GuardarAsync(eventId);
+        await db.SaveChangesAsync();
+
+        var confirmadas = db.Reservations.Where(r => r.EventId == eventId && r.Status == EstadoReserva.Confirmada);
+        var cupos = await confirmadas.SumAsync(r => (int)r.Quantity);
+        await confirmadas.ExecuteUpdateAsync(s => s
+            .SetProperty(r => r.Status, EstadoReserva.Cancelada)
+            .SetProperty(r => r.CancelledAt, DateTime.UtcNow));
+        await db.Events.Where(e => e.EventId == eventId)
+            .ExecuteUpdateAsync(s => s.SetProperty(e => e.SoldCount, e => e.SoldCount - cupos));
+        await tx.CommitAsync();
+        return new Resultado(Id: eventId);
     }
 
     // Un evento cancelado o ya realizado no admite cambios.

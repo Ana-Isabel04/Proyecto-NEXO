@@ -4,7 +4,7 @@ import { api, money, fmt } from '../api.js'; import { useAuth } from '../main.js
 const FALLBACK = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='400'%3E%3Crect width='800' height='400' fill='%23ece8e1'/%3E%3C/svg%3E";
 export function Reserve() {
   const { id } = useParams(), [p] = useSearchParams(), nav = useNavigate(), { user } = useAuth(), [e, setE] = useState(null), [qty, setQty] = useState(+p.get('qty') || 1), [pay, setPay] = useState('apple-pay'), [err, setErr] = useState(''), [busy, setBusy] = useState(false), [secs, setSecs] = useState(600);
-  useEffect(() => { api('/events/' + id).then(x => { if (x.payUrl) return nav('/evento/' + id, { replace: true }); setE(x); setQty(q => Math.max(1, Math.min(q, 4, x.left || 1))); }).catch(x => setErr(x.message)); }, [id]);
+  useEffect(() => { api('/events/' + id).then(x => { if (x.payUrl || x.status !== 'disponible') return nav('/evento/' + id, { replace: true }); setE(x); setQty(q => Math.max(1, Math.min(q, 4, x.left || 1))); }).catch(x => setErr(x.message)); }, [id]);
   useEffect(() => { const t = setInterval(() => setSecs(s => s - 1), 1000); return () => clearInterval(t); }, []);
   useEffect(() => { if (secs <= 0) nav('/evento/' + id, { replace: true }); }, [secs]);
   if (!e) return <p className="p-space-xl">{err || 'Cargando…'}</p>;
@@ -81,7 +81,7 @@ export function Reserve() {
 </div>
 <div className="flex flex-col">
 <span className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Producción</span>
-<span className="font-title-md text-title-md text-on-surface">Filarmónica de Cámara NEXO</span>
+<span className="font-title-md text-title-md text-on-surface">{e.organizer}</span>
 </div>
 </div>
 </div>
@@ -354,7 +354,7 @@ export function Confirmation() {
           ¡Reserva Confirmada!
         </h1>
 <p className="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">
-          Hemos enviado los detalles, el recibo digital con sellado temporal y comprobante fiscal a tu correo <strong className="text-on-surface font-semibold">{user.email}</strong>.
+          Tu reserva quedó registrada para la cuenta <strong className="text-on-surface font-semibold">{user.email}</strong>. Puedes consultarla en Mis reservas.
         </p>
 <div className="flex items-center gap-space-sm mt-space-sm font-label-md text-label-md text-outline">
 <span >Identificador de Transacción: <span className="text-on-surface font-mono font-medium">{'TRX-' + r.createdAt.slice(0, 10).replace(/-/g, '') + '-' + r.code.slice(3, 8)}</span></span>

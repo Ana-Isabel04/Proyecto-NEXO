@@ -66,7 +66,7 @@ public class NexoFactory : WebApplicationFactory<NexoDbContext>, IAsyncLifetime
 
     public static async Task<string> TokenAsync(HttpClient cliente)
     {
-        var html = await cliente.GetStringAsync("/");
+        var html = await cliente.GetStringAsync("/Auth/AccesoDenegado");
         return Regex.Match(html, "csrf-token\" content=\"([^\"]+)\"").Groups[1].Value;
     }
 
